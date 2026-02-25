@@ -1,0 +1,43 @@
+{
+  "book_id": 199,
+  "book_title": "경제학자의 생각법",
+  "structure": {
+    "main_start_page": 17,
+    "main_end_page": 370,
+    "chapters": [
+      {
+        "order_index": 0,
+        "title": "일상피가되고살이되는경제학사용법",
+        "start_page": 17,
+        "end_page": 90
+      },
+      {
+        "order_index": 1,
+        "title": "경쟁こ피할수없다면이겨라",
+        "start_page": 91,
+        "end_page": 216
+      },
+      {
+        "order_index": 2,
+        "title": "경제경제는도대체언제좋아지는걸까",
+        "start_page": 217,
+        "end_page": 262
+      },
+      {
+        "order_index": 3,
+        "title": "오류우리가경제학에대해오해하고있는것들",
+        "start_page": 263,
+        "end_page": 304
+      },
+      {
+        "order_index": 4,
+        "title": "경제와정치경제학자의눈으로세상을읽는법",
+        "start_page": 305,
+        "end_page": 370
+      }
+    ],
+    "notes_pages": [],
+    "start_pages": [],
+    "end_pages": []
+  }
+}

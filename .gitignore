@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+*.egg
+
+# Data (large files)
+data/knowledge.db
+data/chroma/
+*.pdf
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+config.yaml
+
+# Raw parsing data (large)
+55bbe48ee53666b54ce523d0ba4166b7.json

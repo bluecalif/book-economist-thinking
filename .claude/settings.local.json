@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(test:*)",
+      "Bash(cd:*)",
+      "Bash(python --version 2>&1 && pip --version 2>&1)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .claude/hooks/skill-activation-prompt.ps1"
+      }
+    ]
+  }
+}

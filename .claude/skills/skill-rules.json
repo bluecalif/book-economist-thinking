@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "skills": {
+    "ku-pipeline": {
+      "type": "guardrail",
+      "enforcement": "warn",
+      "priority": "critical",
+      "promptTriggers": {
+        "keywords": ["KU 추출", "KU 구조", "knowledge unit", "claim", "evidence_summary", "counter_summary", "source_spans", "maturity", "M0", "M1", "M2", "ku_extractor", "KU 파이프라인", "지식 단위"],
+        "intentPatterns": ["KU.*추출", "KU.*생성", "claim.*evidence", "지식.*단위.*추출", "raw_spans.*KU", "PDF.*KU"]
+      }
+    },
+    "db-schema": {
+      "type": "guardrail",
+      "enforcement": "warn",
+      "priority": "critical",
+      "promptTriggers": {
+        "keywords": ["books 테이블", "raw_spans", "knowledge_units", "edges", "generations", "SQLite", "ChromaDB", "ku_embeddings", "book_id", "ku_id", "스키마", "테이블 설계", "DB 스키마", "데이터베이스"],
+        "intentPatterns": ["테이블.*설계", "스키마.*수정", "DB.*생성", "SQLite.*설정", "ChromaDB.*설정", "데이터베이스.*구조"]
+      }
+    },
+    "generation-dev": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["콘텐츠 생성", "아이디어 생성", "generate content", "generate idea", "blog", "thread", "newsletter", "lecture", "summary", "business 모드", "serendipity", "생성 파이프라인", "프롬프트 템플릿", "출처 KU"],
+        "intentPatterns": ["콘텐츠.*생성", "아이디어.*생성", "생성.*파이프라인", "블로그.*생성", "뉴스레터.*생성", "KU.*기반.*생성"]
+      }
+    },
+    "skill-developer": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": ["스킬 생성", "스킬 추가", "skill-rules", "트리거 패턴", "hook", "enforcement", "guardrail", "SKILL.md"],
+        "intentPatterns": ["스킬.*만들", "스킬.*생성", "hook.*설정", "트리거.*설계"]
+      }
+    }
+  }
+}

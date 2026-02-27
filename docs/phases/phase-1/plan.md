@@ -1,6 +1,7 @@
 # Phase 1: 데이터 파이프라인 (Stage A~D)
 > Last Updated: 2026-02-27
-> Status: In Progress
+> Status: In Progress — Stage C 진행 예정
+> Current Step: Stage B 완료, Stage C 착수 대기
 
 ## 1. Summary (개요)
 
@@ -21,14 +22,13 @@
 
 ## 2. Current State (현재 상태)
 
-- 프로젝트 git 저장소 초기화 완료
-- masterplan v2.0 확정, project-overall 3파일 생성 완료
+- **Stage A 완료** (`4796a61`): pyproject.toml, src/ 구조, config.yaml, 의존성 설치
+- **Stage B 완료**: SQLite 5테이블 DDL + CRUD 헬퍼 + ChromaDB 래퍼 + 초기화 검증
 - 기존 파싱 데이터 3종 확보:
   - `55bbe4_경제학자의_생각법_structure.json` (1.1K) — 5챕터 구조 메타데이터
   - `55bbe4_경제학자의_생각법_text.json` (391K) — 챕터/페이지별 텍스트 (400페이지)
   - `55bbe48ee53666b54ce523d0ba4166b7.json` (2.2M) — PDF 파싱 원본 (1,986 elements)
-- 소스 코드: 없음 (Stage A부터 시작)
-- DB: 없음
+- DB 스키마 준비 완료 (knowledge.db 초기화 검증 OK)
 
 ### 기존 JSON 데이터 구조
 

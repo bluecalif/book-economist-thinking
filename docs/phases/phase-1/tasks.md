@@ -1,14 +1,14 @@
 # Phase 1: 데이터 파이프라인 — Tasks
 > Last Updated: 2026-02-27
 
-## Progress: 0/18 Tasks (0%)
+## Progress: 9/18 Tasks (50%)
 
 ---
 
-### Stage A: 프로젝트 초기화 (S) — 0/5
+### Stage A: 프로젝트 초기화 (S) — 5/5 ✅
 
-- [ ] A.1 `pyproject.toml` 생성 (의존성 정의)
-- [ ] A.2 `src/` 디렉터리 구조 생성 (`__init__.py` 포함)
+- [x] A.1 `pyproject.toml` 생성 (의존성 정의) — `4796a61`
+- [x] A.2 `src/` 디렉터리 구조 생성 (`__init__.py` 포함) — `4796a61`
   - `src/__init__.py`
   - `src/db/__init__.py`
   - `src/ingest/__init__.py`
@@ -16,31 +16,32 @@
   - `src/generation/__init__.py`
   - `src/generation/templates/`
   - `src/vault/__init__.py`
-- [ ] A.3 `data/`, `vault/` 디렉터리 생성 (`.gitkeep`)
+- [x] A.3 `data/`, `vault/` 디렉터리 생성 (`.gitkeep`) — `4796a61`
   - `data/raw/`, `data/chroma/`
-- [ ] A.4 `config.yaml` 기본 설정 파일
-  - API 키 참조 (환경변수), 모델 선택, DB 경로, 청크 크기
-- [ ] A.5 의존성 설치 확인 (`pip install -e .`)
+- [x] A.4 `config.yaml` 기본 설정 파일 — `4796a61`
+  - API 키 참조 (환경변수), 모델: gpt-4.1-mini + text-embedding-3-large
+- [x] A.5 의존성 설치 확인 (`pip install -e .`) — `4796a61`
 
 ---
 
-### Stage B: DB 스키마 (M) — 0/4
+### Stage B: DB 스키마 (M) — 4/4 ✅
 
-- [ ] B.1 SQLite DDL — 5개 테이블 생성
+- [x] B.1 SQLite DDL — 5개 테이블 생성 — `pending`
   - books, raw_spans, knowledge_units, edges, generations
   - 인덱스: idx_raw_spans_book, idx_ku_book, idx_ku_domain, idx_edges_*
-- [ ] B.2 CRUD 헬퍼 함수 (`src/db/models.py`)
+- [x] B.2 CRUD 헬퍼 함수 (`src/db/models.py`) — `pending`
   - `init_db()` — 테이블 생성
   - `insert_book()`, `get_book()`, `list_books()`
-  - `insert_raw_span()`, `get_raw_spans_by_book()`, `get_raw_spans_by_chapter()`
+  - `insert_raw_span()`, `bulk_insert_raw_spans()`, `get_raw_spans_by_book()`, `get_raw_spans_by_chapter()`
   - `insert_ku()`, `get_ku()`, `list_kus_by_book()`, `update_ku()`
-- [ ] B.3 ChromaDB 래퍼 (`src/db/vectors.py`)
-  - `init_chroma()` — 컬렉션 생성
-  - `add_embeddings()` — KU 임베딩 추가
+  - `count_raw_spans()`, `count_kus()`
+- [x] B.3 ChromaDB 래퍼 (`src/db/vectors.py`) — `pending`
+  - `init_chroma()` — 컬렉션 생성 (cosine space)
+  - `add_embeddings()` — KU 임베딩 upsert
   - `query_similar()` — 유사도 검색
   - `delete_embeddings()` — 삭제
-- [ ] B.4 DB 초기화 스크립트
-  - `data/knowledge.db` 자동 생성, 테이블 존재 확인
+- [x] B.4 DB 초기화 스크립트 — `pending`
+  - `init_db()` 호출 시 `data/knowledge.db` 자동 생성, 테이블 존재 확인
 
 ---
 

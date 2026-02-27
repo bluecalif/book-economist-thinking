@@ -103,23 +103,30 @@
 
 ## Modified Files Summary
 
-(Phase 전체 변경 파일 트리 — 실행 시작 후 업데이트)
-
+### Stage A (4796a61)
 ```
-src/
-├── __init__.py
-├── db/
-│   ├── __init__.py
-│   ├── models.py
-│   └── vectors.py
-└── ingest/
-    ├── __init__.py
-    ├── pdf_parser.py
-    └── ku_extractor.py
-data/
-├── knowledge.db
-├── chroma/
-└── raw/
-config.yaml
-pyproject.toml
+pyproject.toml          — NEW: 의존성 정의 (7개 패키지)
+config.yaml             — NEW: API/모델/경로 설정 (gitignored)
+src/__init__.py         — NEW: 패키지 초기화
+src/db/__init__.py      — NEW
+src/ingest/__init__.py  — NEW
+src/search/__init__.py  — NEW
+src/generation/__init__.py — NEW
+src/vault/__init__.py   — NEW
+data/raw/.gitkeep       — NEW
+data/chroma/.gitkeep    — NEW (gitignored 내용물)
+vault/.gitkeep          — NEW
+```
+
+### Stage B (pending commit)
+```
+src/db/models.py        — NEW: SQLite DDL (5테이블, 6인덱스) + CRUD 헬퍼 (~230 lines)
+src/db/vectors.py       — NEW: ChromaDB 래퍼 (init/add/query/delete, ~60 lines)
+data/knowledge.db       — 자동 생성 (init_db 호출 시)
+```
+
+### 미구현 (Stage C, D)
+```
+src/ingest/pdf_parser.py    — Stage C
+src/ingest/ku_extractor.py  — Stage D
 ```

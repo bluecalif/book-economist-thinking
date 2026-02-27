@@ -160,8 +160,8 @@ chapters[].pages[].text            →  raw_spans.text (페이지 단위, 1:1)
 | 1 | Raw SQL + 헬퍼 함수 | 테이블 5개, ORM 오버헤드 불필요 | SQLAlchemy ORM | models.py 구조 |
 | 2 | 기존 JSON 우선 경로 | 이미 파싱된 데이터 존재 | PDF 직접 파싱 | Stage C 구현 방식 |
 | 3 | edges DDL만 Phase 1 | Graph Layer는 Phase 3 | edges 완전 스킵 | DDL 생성만, CRUD 미구현 |
-| 4 | GPT-4o mini 우선 | KU 추출 비용 $2-5 | GPT-4o ($10-20) | Stage D 비용/품질 |
-| 5 | text-embedding-3-small | 비용 효율적, 1권 규모 충분 | text-embedding-3-large | Stage D 임베딩 |
+| 4 | GPT-4.1 mini 우선 | KU 추출 비용 효율 | GPT-4.1 | Stage D 비용/품질 |
+| 5 | text-embedding-3-large | 정확도 우선 | text-embedding-3-small | Stage D 임베딩 |
 | 6 | 페이지 단위 청킹 확정 (C-1) | OCR 줄바꿈이 문단 경계 미보장 | 줄바꿈 기반 분리 | Stage C 구현 |
 | 7 | D.2 3단계 fallback | JSON 파싱 실패 대응 | 단순 재시도 | 추출 안정성 |
 
@@ -181,12 +181,12 @@ chapters[].pages[].text            →  raw_spans.text (페이지 단위, 1:1)
 - [ ] source_spans: JSON array of raw_span ids
 
 ### 데이터
-- [ ] 5테이블 DDL (edges 포함)
-- [ ] ChromaDB ku_embeddings 컬렉션
+- [x] 5테이블 DDL (edges 포함) — Stage B 완료
+- [x] ChromaDB ku_embeddings 컬렉션 — Stage B 완료
 - [ ] ID 패턴 준수 (book_id, raw_span_id, ku_id)
 
 ### 코딩
-- [ ] 코드: English (변수명, 함수명)
-- [ ] Raw SQL + 헬퍼 함수 (ORM 미사용)
+- [x] 코드: English (변수명, 함수명) — Stage B 확인
+- [x] Raw SQL + 헬퍼 함수 (ORM 미사용) — Stage B 확인
 - [ ] 인코딩: utf-8-sig (read), utf-8 (write)
 - [ ] `PYTHONUTF8=1` 환경변수

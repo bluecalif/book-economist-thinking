@@ -16,7 +16,7 @@
 
 | Phase | Status | Progress | Current Step | 비고 |
 |-------|--------|----------|--------------|------|
-| Phase 1: 1권 MVP | In Progress | 0/7 Stages | Stage A 대기 | 설계 문서 완성, 실행 시작 전 |
+| Phase 1: 1권 MVP | In Progress | 0/7 Stages | Stage A 대기 | dev-docs 생성 완료, 실행 시작 전 |
 | Phase 2: 그래프+5권 | Planned | - | - | Phase 1 완료 후 |
 | Phase 3: 87권+진화 | Planned | - | - | Phase 2 완료 후 |
 | Phase 4: 웹 UI | Conditional | - | - | 가치 검증 통과 시 |

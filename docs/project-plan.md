@@ -1,5 +1,6 @@
 # Project Plan
 > Last Updated: 2026-02-27
+> Phase Dev-Docs: `docs/phases/phase-1-mvp/` (plan, context, tasks, design-notes)
 
 ## Roadmap Overview
 

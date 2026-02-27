@@ -1,61 +1,88 @@
 # Session Compact
 
-> Generated: 2026-02-25 (Session 5)
+> Generated: 2026-02-27 (Session 10)
 > Source: Conversation compaction via /compact-and-go
 
 ## Goal
-Knowledge System v2.0 프로젝트의 `.claude/commands/` 커맨드 파일 3개를 마스터플랜 v2.0 기준으로 개정.
+project-overall 3파일(project-plan.md, project-context.md, project-tasks.md) 생성 — dev-docs 커맨드 기반으로 masterplan에서 추출
 
 ## Completed
-- [x] `design-docs.md` v2.0 기준 전면 개정
-  - `masterplan-draft-r1.0.md` → `masterplan-v2.0.md` 참조 변경
-  - L3 Dispute → L3 Generation 레이어 명칭 수정
-  - `dev/active/` → `docs/phases/` 디렉터리 패턴 변경
-  - `project-overall` 3파일 → `project-status.md` 단일 파일로 간소화
-  - 컨벤션 체크리스트 v2.0 스키마 반영 (5테이블, Edge 6타입, KU ID 패턴)
-  - Git 커밋 액션 추가 (Step 5): 개별 파일 `git add` → `git commit`
-- [x] `progress-update.md` v2.0 기준 전면 개정
-  - 동일 경로/참조 변경
-  - `--sync-overall` → `--sync-status` 플래그 변경
-  - Phase 완료 시 masterplan §14 완료 기준 대조 추가
-  - Git 커밋 액션 추가 (Step 5): step 완료/Phase 완료 커밋 메시지 형식 정의
-- [x] `compact-and-go.md` v2.0 컨텍스트 반영
-  - Context 섹션 템플릿에 v2.0 참조 추가 (마스터플랜 경로, Phase 완료 기준, 디렉터리 구조)
+- [x] `git init` — 프로젝트 git 저장소 초기화 (Session 6)
+- [x] `.gitignore` 생성 (PDF, large JSON, data/, __pycache__ 등 제외)
+- [x] `docs/project-status.md` 생성 → 이후 3파일로 분리 교체
+- [x] `docs/phases/phase-1-mvp/` 4파일 생성 (plan, context, tasks, design-notes) → 이후 삭제 (재생성 필요)
+- [x] 초기 커밋 `3d7708f` — 설계 문서 + 기존 자산 포함
+- [x] **Hook 시스템 진단 및 수정** — PowerShell 제거, `npx tsx` 직접 호출로 전환
+- [x] **커맨드 리팩터링** (Session 8): design-docs→dev-docs, progress-update→step-update
+- [x] **project-overall 3파일 구조 반영** (Session 9): 커맨드에서 3파일 참조로 변경
+- [x] **project-overall 3파일 생성** (Session 10):
+  - [x] `docs/project-plan.md` — Phase 1~4 로드맵, Stage A~G, 의존성, 타임라인
+  - [x] `docs/project-context.md` — 기술 스택, 5테이블 스키마, ID 패턴, 컨벤션
+  - [x] `docs/project-tasks.md` — Phase 1 29개 서브태스크, Key Decisions 8건
+  - [x] 커밋 `cbfc6f0` — project-overall 3파일 생성
 
 ## Current State
-`.claude/commands/` 커맨드 3개 모두 v2.0 기준 개정 완료. Phase 1 실행 준비 상태.
+project-overall 3파일 생성 및 커밋 완료. Phase 1 설계 체계 정비됨.
+**미커밋 변경사항 있음** (hook 수정 + 커맨드 리팩터링 + 구 phase-1-mvp 삭제 + project-status.md 삭제).
 
-### Changed Files
-- `.claude/commands/design-docs.md` — v2.0 전면 개정 + git 액션 추가
-- `.claude/commands/progress-update.md` — v2.0 전면 개정 + git 액션 추가
-- `.claude/commands/compact-and-go.md` — v2.0 컨텍스트 템플릿 반영
+### Changed Files (미커밋)
+- `.claude/settings.local.json` — hook command를 `npx tsx` 직접 호출로 변경
+- `.claude/hooks/skill-activation-prompt.ps1` — `$PSScriptRoot` 기반 (백업용, 미사용)
+- `.claude/hooks/skill-activation-prompt.ts` — BOM strip 로직 추가
+- `.claude/commands/design-docs.md` — 삭제 (dev-docs.md로 대체)
+- `.claude/commands/progress-update.md` — 삭제 (step-update.md로 대체)
+- `.claude/commands/dev-docs.md` — 신규 (untracked)
+- `.claude/commands/step-update.md` — 신규 (untracked)
+- `docs/phases/phase-1-mvp/` — 4파일 삭제 (재생성 필요)
+- `docs/project-status.md` — 삭제 (3파일로 대체)
+- `docs/session-compact.md` — 이 파일
+
+### 커맨드 매핑 (REF → 프로젝트)
+| REF 원본 | 프로젝트 적용 |
+|---|---|
+| `dev/active/[phase]/` | `docs/phases/[phase]/` |
+| `project-overall` 3파일 | `docs/project-plan.md`, `docs/project-context.md`, `docs/project-tasks.md` |
+| `debug-history.md` | `design-notes.md`에 통합 |
+| `masterplan-v0.md` | `masterplan-v2.0.md` |
+| `--sync-overall` | `--sync-status` |
 
 ## Remaining / TODO
-- [ ] **Phase 1 실행**: 프로젝트 초기화 → DB 스키마 → PDF 파싱 → KU 추출 → 검색 + 생성
-  - [ ] `pyproject.toml` + 디렉터리 구조 + 의존성 설치
-  - [ ] SQLite DDL + ChromaDB 컬렉션 설정 (`src/db/models.py`, `src/db/vectors.py`)
-  - [ ] PDF 파싱 파이프라인 (`src/ingest/pdf_parser.py`)
-  - [ ] KU 추출 파이프라인 (`src/ingest/ku_extractor.py`)
-  - [ ] 의미 검색 (`src/search/vector.py`)
-  - [ ] 콘텐츠 생성 기본 기능 (`src/generation/content.py` + 템플릿)
-  - [ ] CLI 진입점 (`src/cli.py`)
-  - [ ] 마크다운 출력 (`src/vault/renderer.py`)
+- [ ] **미커밋 변경사항 커밋** — hook 수정 + 커맨드 리팩터링 + 구 파일 삭제를 하나의 커밋으로
+- [x] **Phase 1 dev-docs 재생성** — `/dev-docs create phase-1-mvp` (4파일 생성 완료, JSON 데이터 분석 포함)
+- [ ] **Phase 1 실행**: Stage A부터 순차 진행
+  - [ ] Stage A: `pyproject.toml` + 디렉터리 구조 + `config.yaml`
+  - [ ] Stage B: SQLite DDL + CRUD (`src/db/models.py`) + ChromaDB 래퍼 (`src/db/vectors.py`)
+  - [ ] Stage C: PDF 파싱 — 기존 JSON 구조 분석 → `src/ingest/pdf_parser.py`
+  - [ ] Stage D: KU 추출 (`src/ingest/ku_extractor.py`) + 임베딩 + 프롬프트 최적화
+  - [ ] Stage E: 의미 검색 (`src/search/vector.py`)
+  - [ ] Stage F: 콘텐츠 생성 (`src/generation/content.py` + 템플릿 3종)
+  - [ ] Stage G: CLI (`src/cli.py`) + Vault 렌더러 (`src/vault/renderer.py`) + 통합 테스트
 
 ## Key Decisions
-- **디렉터리 패턴 변경**: `dev/active/[phase]/` → `docs/phases/[phase]/` — v2.0의 `docs/` 중심 구조에 맞춤
-- **project-overall 간소화**: 3개 파일(plan, context, tasks) → `docs/project-status.md` 단일 파일
-- **Git 액션 필수화**: design-docs, progress-update 모두 커밋까지 자동 수행 (push는 명시 요청 시만)
-- **커밋 메시지 컨벤션**: `docs: [phase-name] ...` 형식 통일
+- **Raw SQL + 헬퍼 함수**: ORM 대신 직접 SQL — 단순성 우선
+- **기존 JSON 우선 경로**: PDF 직접 파싱은 보조 경로
+- **edges 테이블**: DDL만 Phase 1, 실제 사용은 Phase 2
+- **GPT-4o mini 우선**: KU 추출 비용 절감
+- **Typer CLI 유력**: Stage G에서 최종 확정
+- **Hook: PowerShell 제거**: `npx tsx` 직접 호출
+- **커맨드 이름 변경**: dev-docs, step-update (REF 표준)
+- **project-overall 3파일 분리**: plan/context/tasks (REF 표준)
 
 ## Context
 다음 세션에서는 답변에 한국어를 사용하세요.
 
 ### 프로젝트 핵심 참조
 - **마스터플랜**: `docs/masterplan-v2.0.md` — 전체 설계 (L0-L4, 스키마, CLI)
+- **project-overall**: `docs/project-plan.md`, `docs/project-context.md`, `docs/project-tasks.md`
 - **기술 스택**: Python 3.12 (anaconda3), SQLite, ChromaDB, Click/Typer CLI, LLM API (Claude/GPT-4o)
 - **대상 도서**: 경제학자의 생각법 (1권 MVP)
-- **기존 파싱 데이터**: `55bbe4_경제학자의_생각법_structure.json`, `55bbe4_경제학자의_생각법_text.json` (5개 챕터, 400페이지)
-- **Hooks & Skills**: `.claude/hooks/` (skill-activation-prompt), `.claude/skills/` (4개 스킬 구성 완료)
+- **기존 파싱 데이터**: `55bbe4_경제학자의_생각법_structure.json` (5챕터), `55bbe4_경제학자의_생각법_text.json` (400페이지)
+- **Hooks & Skills**: `.claude/hooks/` → `npx tsx` 직접 호출, `.claude/skills/` (4개 스킬)
+- **커맨드 3개**: compact-and-go, dev-docs, step-update
+
+### Hook 시스템 현황
+- **hook command**: `npx tsx .claude/hooks/skill-activation-prompt.ts` (PowerShell 미경유)
+- **등록 스킬 4개**: ku-pipeline(critical), db-schema(critical), generation-dev(high), skill-developer(medium)
 
 ### Phase 1 완료 기준 (masterplan §14)
 - `ks ingest book.pdf` → KU 추출 + DB 저장 + 마크다운 생성
@@ -79,8 +106,7 @@ pyproject.toml
 ```
 
 ## Next Action
-Phase 1 실행을 시작한다:
-1. `pyproject.toml` 생성 + 프로젝트 디렉터리 구조 생성
-2. 의존성 설치
-3. DB 스키마 구현 (`src/db/models.py`, `src/db/vectors.py`)
-4. 이후 단계별 진행
+미커밋 변경사항을 커밋한 뒤, Phase 1 dev-docs를 재생성하고, Stage A 실행을 시작한다:
+1. 미커밋 변경사항 커밋 (hook + 커맨드 + 구 파일 삭제)
+2. `/dev-docs create phase-1-mvp` — 삭제된 phase-1-mvp 4파일 재생성
+3. Stage A 실행: `pyproject.toml`, `src/` 디렉터리, `config.yaml`, 의존성 설치

@@ -4,14 +4,27 @@
       "WebSearch",
       "Bash(test:*)",
       "Bash(cd:*)",
-      "Bash(python --version 2>&1 && pip --version 2>&1)"
+      "Bash(python --version 2>&1 && pip --version 2>&1)",
+      "Bash(powershell.exe:*)",
+      "Bash(printf {\"\"session_id\"\":\"\"test\"\",\"\"transcript_path\"\":\"\"\"\",\"\"cwd\"\":\"\".\"\",\"\"permission_mode\"\":\"\"default\"\",\"\"prompt\"\":\"\"KU 추출 테스트\"\"}:*)",
+      "Bash(printf {\"\"session_id\"\":\"\"test\"\",\"\"transcript_path\"\":\"\"\"\",\"\"cwd\"\":\"\".\"\",\"\"permission_mode\"\":\"\"default\"\",\"\"prompt\"\":\"\"콘텐츠 생성 blog format\"\"}:*)",
+      "Bash(printf {\"\"session_id\"\":\"\"test\"\",\"\"transcript_path\"\":\"\"\"\",\"\"cwd\"\":\"\".\"\",\"\"permission_mode\"\":\"\"default\"\",\"\"prompt\"\":\"\"hello world simple question\"\"}:*)",
+      "Bash(git:*)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(ls:*)"
     ]
   },
   "hooks": {
     "UserPromptSubmit": [
       {
-        "type": "command",
-        "command": "powershell.exe -ExecutionPolicy Bypass -File .claude/hooks/skill-activation-prompt.ps1"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx tsx .claude/hooks/skill-activation-prompt.ts"
+          }
+        ]
       }
     ]
   }

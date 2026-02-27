@@ -1,29 +1,33 @@
 # Session Compact
 
-> Generated: 2026-02-27 (Session 10)
+> Generated: 2026-02-27 (Session 11)
 > Source: Conversation compaction via /compact-and-go
 
 ## Goal
-project-overall 3파일(project-plan.md, project-context.md, project-tasks.md) 생성 — dev-docs 커맨드 기반으로 masterplan에서 추출
+Phase 1 MVP dev-docs 재생성 — `/dev-docs create phase-1-mvp` 커맨드로 삭제된 4파일을 project-overall 기반 + JSON 데이터 분석 포함하여 thoroughly 재생성
 
 ## Completed
 - [x] `git init` — 프로젝트 git 저장소 초기화 (Session 6)
 - [x] `.gitignore` 생성 (PDF, large JSON, data/, __pycache__ 등 제외)
 - [x] `docs/project-status.md` 생성 → 이후 3파일로 분리 교체
-- [x] `docs/phases/phase-1-mvp/` 4파일 생성 (plan, context, tasks, design-notes) → 이후 삭제 (재생성 필요)
 - [x] 초기 커밋 `3d7708f` — 설계 문서 + 기존 자산 포함
 - [x] **Hook 시스템 진단 및 수정** — PowerShell 제거, `npx tsx` 직접 호출로 전환
 - [x] **커맨드 리팩터링** (Session 8): design-docs→dev-docs, progress-update→step-update
 - [x] **project-overall 3파일 구조 반영** (Session 9): 커맨드에서 3파일 참조로 변경
-- [x] **project-overall 3파일 생성** (Session 10):
-  - [x] `docs/project-plan.md` — Phase 1~4 로드맵, Stage A~G, 의존성, 타임라인
-  - [x] `docs/project-context.md` — 기술 스택, 5테이블 스키마, ID 패턴, 컨벤션
-  - [x] `docs/project-tasks.md` — Phase 1 29개 서브태스크, Key Decisions 8건
-  - [x] 커밋 `cbfc6f0` — project-overall 3파일 생성
+- [x] **project-overall 3파일 생성** (Session 10): 커밋 `cbfc6f0`
+- [x] **Phase 1 dev-docs 재생성** (Session 11):
+  - [x] 기존 JSON 데이터 3종 구조 분석 (text.json 391K, structure.json 1.1K, 대형 JSON 2.2M)
+  - [x] `docs/phases/phase-1-mvp/plan.md` — 7 Stage, 29 Task, JSON 데이터 매핑 포함
+  - [x] `docs/phases/phase-1-mvp/context.md` — 핵심 파일, DDL 전문, ID 패턴, 결정사항 7건
+  - [x] `docs/phases/phase-1-mvp/tasks.md` — 29개 서브태스크 상세 체크리스트
+  - [x] `docs/phases/phase-1-mvp/design-notes.md` — Stage C/D/F/G 설계 대안, 열린 질문, KU 추출 프롬프트 초안
+  - [x] project-overall 동기화 (project-plan.md, project-tasks.md 업데이트)
+  - [x] 정합성 검증 7항목 PASS
+  - [x] 커밋 `85e8fb6` — phase-1-mvp 설계 문서 재생성
 
 ## Current State
-project-overall 3파일 생성 및 커밋 완료. Phase 1 설계 체계 정비됨.
-**미커밋 변경사항 있음** (hook 수정 + 커맨드 리팩터링 + 구 phase-1-mvp 삭제 + project-status.md 삭제).
+Phase 1 dev-docs 4파일 생성 및 커밋 완료. 설계 체계 전체 정비 완료.
+**미커밋 변경사항 있음** (hook 수정 + 커맨드 리팩터링 + 구 파일 삭제).
 
 ### Changed Files (미커밋)
 - `.claude/settings.local.json` — hook command를 `npx tsx` 직접 호출로 변경
@@ -33,26 +37,15 @@ project-overall 3파일 생성 및 커밋 완료. Phase 1 설계 체계 정비�
 - `.claude/commands/progress-update.md` — 삭제 (step-update.md로 대체)
 - `.claude/commands/dev-docs.md` — 신규 (untracked)
 - `.claude/commands/step-update.md` — 신규 (untracked)
-- `docs/phases/phase-1-mvp/` — 4파일 삭제 (재생성 필요)
 - `docs/project-status.md` — 삭제 (3파일로 대체)
-- `docs/session-compact.md` — 이 파일
-
-### 커맨드 매핑 (REF → 프로젝트)
-| REF 원본 | 프로젝트 적용 |
-|---|---|
-| `dev/active/[phase]/` | `docs/phases/[phase]/` |
-| `project-overall` 3파일 | `docs/project-plan.md`, `docs/project-context.md`, `docs/project-tasks.md` |
-| `debug-history.md` | `design-notes.md`에 통합 |
-| `masterplan-v0.md` | `masterplan-v2.0.md` |
-| `--sync-overall` | `--sync-status` |
+- `docs/login-issue.md` — 신규 (untracked, 별도 이슈)
 
 ## Remaining / TODO
 - [ ] **미커밋 변경사항 커밋** — hook 수정 + 커맨드 리팩터링 + 구 파일 삭제를 하나의 커밋으로
-- [x] **Phase 1 dev-docs 재생성** — `/dev-docs create phase-1-mvp` (4파일 생성 완료, JSON 데이터 분석 포함)
 - [ ] **Phase 1 실행**: Stage A부터 순차 진행
-  - [ ] Stage A: `pyproject.toml` + 디렉터리 구조 + `config.yaml`
+  - [ ] Stage A: `pyproject.toml` + 디렉터리 구조 + `config.yaml` + 의존성 설치
   - [ ] Stage B: SQLite DDL + CRUD (`src/db/models.py`) + ChromaDB 래퍼 (`src/db/vectors.py`)
-  - [ ] Stage C: PDF 파싱 — 기존 JSON 구조 분석 → `src/ingest/pdf_parser.py`
+  - [ ] Stage C: 기존 JSON 구조 분석 → `src/ingest/pdf_parser.py`
   - [ ] Stage D: KU 추출 (`src/ingest/ku_extractor.py`) + 임베딩 + 프롬프트 최적화
   - [ ] Stage E: 의미 검색 (`src/search/vector.py`)
   - [ ] Stage F: 콘텐츠 생성 (`src/generation/content.py` + 템플릿 3종)
@@ -74,9 +67,13 @@ project-overall 3파일 생성 및 커밋 완료. Phase 1 설계 체계 정비�
 ### 프로젝트 핵심 참조
 - **마스터플랜**: `docs/masterplan-v2.0.md` — 전체 설계 (L0-L4, 스키마, CLI)
 - **project-overall**: `docs/project-plan.md`, `docs/project-context.md`, `docs/project-tasks.md`
+- **Phase 1 dev-docs**: `docs/phases/phase-1-mvp/` (plan, context, tasks, design-notes)
 - **기술 스택**: Python 3.12 (anaconda3), SQLite, ChromaDB, Click/Typer CLI, LLM API (Claude/GPT-4o)
 - **대상 도서**: 경제학자의 생각법 (1권 MVP)
-- **기존 파싱 데이터**: `55bbe4_경제학자의_생각법_structure.json` (5챕터), `55bbe4_경제학자의_생각법_text.json` (400페이지)
+- **기존 파싱 데이터**:
+  - `55bbe4_경제학자의_생각법_text.json` (391K) — 5챕터, 400페이지, chapters[].pages[].{page_number, text}
+  - `55bbe4_경제학자의_생각법_structure.json` (1.1K) — 챕터 경계 메타데이터
+  - `55bbe48ee53666b54ce523d0ba4166b7.json` (2.2M) — PDF 파싱 원본, 1,986 elements
 - **Hooks & Skills**: `.claude/hooks/` → `npx tsx` 직접 호출, `.claude/skills/` (4개 스킬)
 - **커맨드 3개**: compact-and-go, dev-docs, step-update
 
@@ -106,7 +103,6 @@ pyproject.toml
 ```
 
 ## Next Action
-미커밋 변경사항을 커밋한 뒤, Phase 1 dev-docs를 재생성하고, Stage A 실행을 시작한다:
+미커밋 변경사항을 커밋한 뒤, Phase 1 Stage A 실행을 시작한다:
 1. 미커밋 변경사항 커밋 (hook + 커맨드 + 구 파일 삭제)
-2. `/dev-docs create phase-1-mvp` — 삭제된 phase-1-mvp 4파일 재생성
-3. Stage A 실행: `pyproject.toml`, `src/` 디렉터리, `config.yaml`, 의존성 설치
+2. Stage A 실행: `pyproject.toml`, `src/` 디렉터리, `config.yaml`, 의존성 설치

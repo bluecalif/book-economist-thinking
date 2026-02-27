@@ -71,15 +71,16 @@ argument-hint: (optional) next action to continue after compaction
 
 ### 프로젝트 핵심 참조
 - **마스터플랜**: `docs/masterplan-v2.0.md` — 전체 설계 (L0-L4, 스키마, CLI)
-- **기술 스택**: Python 3.11+, SQLite, ChromaDB, Click/Typer CLI, LLM API
+- **기술 스택**: Python 3.12 (anaconda3), SQLite, ChromaDB, Typer CLI, LLM API (Claude/GPT-4o)
 - **대상 도서**: 경제학자의 생각법 (1권 MVP)
+- **Phase dev-docs**: `docs/phases/phase-{N}/` (plan, context, tasks, design-notes)
 [다음 세션에서 필요한 핵심 정보]
 
-### Phase 완료 기준 (masterplan §14)
-[현재 Phase의 완료 기준 인용]
+### 현재 Phase 완료 기준
+[현재 Phase의 완료 기준 인용 — phase-N/plan.md §3 참조]
 
-### 디렉터리 구조 (masterplan §12)
-[현재 src/ 구조 요약]
+### 디렉터리 구조
+[현재 src/ 구조 요약 — phase-N/design-notes.md 하단 참조]
 
 ## Next Action
 [다음에 수행할 구체적 작업]

@@ -35,8 +35,9 @@ interface MatchedSkill {
 
 async function main() {
     try {
-        // Read input from stdin
-        const input = readFileSync(0, 'utf-8');
+        // Read input from stdin (strip BOM if present)
+        const raw = readFileSync(0, 'utf-8');
+        const input = raw.replace(/^\uFEFF/, '');
         const data: HookInput = JSON.parse(input);
         const prompt = data.prompt.toLowerCase();
 

@@ -42,32 +42,42 @@ L3 생성 레이어(콘텐츠 + 아이디어)의 파이프라인 설계 및 구�
 ### CLI 사용 예
 
 ```bash
+# Phase 2
 ks generate content --topic "매몰비용" --format blog --depth deep
 ks generate content --topic "게임이론의 실생활 적용" --format thread
+ks generate content --topic "기회비용" --format summary
+
+# Phase 3+
 ks generate content --ku ku-econ-001-0042,ku-mgmt-003-0015 --format newsletter
+ks generate content --topic "행동경제학 입문" --format lecture
 ```
 
 ### 5가지 포맷
 
-| 포맷 | 설명 | 예상 길이 |
-|------|------|----------|
-| `blog` | 블로그 포스트 | 1,500-3,000자 |
-| `thread` | 소셜미디어 스레드 | 5-10개 항목 |
-| `newsletter` | 뉴스레터 섹션 | 500-1,000자 |
-| `lecture` | 강의 노트 | 2,000-5,000자 |
-| `summary` | 개념 요약 | 300-500자 |
+| 포맷 | 설명 | 예상 길이 | Phase |
+|------|------|----------|-------|
+| `blog` | 블로그 포스트 | 1,500-3,000자 | **Phase 2** |
+| `thread` | 소셜미디어 스레드 | 5-10개 항목 | **Phase 2** |
+| `summary` | 개념 요약 | 300-500자 | **Phase 2** |
+| `newsletter` | 뉴스레터 섹션 | 500-1,000자 | Phase 3+ |
+| `lecture` | 강의 노트 | 2,000-5,000자 | Phase 3+ |
+
+> **Phase 2 범위:** blog, thread, summary 3종만 구현. newsletter, lecture는 Phase 3+에서 추가.
 
 ### 포맷별 특성
 
-- **blog**: 서론-본론-결론 구조, 독자 친화적 톤
-- **thread**: 번호 매기기, 각 항목 독립적, 훅 문장 시작
-- **newsletter**: 핵심 요약 + "더 알아보기" 형태
-- **lecture**: 학습 목표 → 설명 → 예시 → 정리
-- **summary**: 3-5개 핵심 포인트, 간결하게
+- **blog**: 서론-본론-결론 구조, 독자 친화적 톤 *(Phase 2)*
+- **thread**: 번호 매기기, 각 항목 독립적, 훅 문장 시작 *(Phase 2)*
+- **summary**: 3-5개 핵심 포인트, 간결하게 *(Phase 2)*
+- **newsletter**: 핵심 요약 + "더 알아보기" 형태 *(Phase 3+)*
+- **lecture**: 학습 목표 → 설명 → 예시 → 정리 *(Phase 3+)*
 
 ---
 
-## 아이디어 생성 (Idea Generation)
+## 아이디어 생성 (Idea Generation) — Phase 3+
+
+> **주의:** 아이디어 생성은 Phase 3+(그래프 + 다권 확장) 이후 구현 예정. Phase 2에서는 콘텐츠 생성만 구현.
+> edges 테이블과 cross-domain KU가 필요하므로 Phase 3 그래프 레이어 완성 후 착수.
 
 ### CLI 사용 예
 
@@ -141,16 +151,17 @@ ks generate idea --mode serendipity  # 랜덤 cross-domain 조합
 - [ ] 생성 결과에 KU ID 목록이 첨부되는가?
 - [ ] generations 테이블에 기록되는가?
 - [ ] ku_ids가 JSON array 형태인가?
-- [ ] 포맷이 5종 중 하나인가? (content mode)
-- [ ] 모드가 3종 중 하나인가? (idea mode)
+- [ ] 포맷이 Phase 2 기준 3종(blog, thread, summary) 중 하나인가? (Phase 3+: newsletter, lecture 추가)
+- [ ] 모드가 3종 중 하나인가? (idea mode — Phase 3+)
 - [ ] 프롬프트 템플릿이 templates/ 디렉터리에 있는가?
 
 ---
 
 ## 관련 파일
 
-- `src/generation/content.py` — 콘텐츠 생성 파이프라인
-- `src/generation/idea.py` — 아이디어 생성 파이프라인
-- `src/generation/templates/` — 프롬프트 템플릿
+- `src/generation/content.py` — 콘텐츠 생성 파이프라인 *(Phase 2)*
+- `src/generation/idea.py` — 아이디어 생성 파이프라인 *(Phase 3+)*
+- `src/generation/templates/` — 프롬프트 템플릿 (Phase 2: blog, summary, thread)
 - `src/db/models.py` — generations 테이블
+- `docs/phases/phase-2/plan.md` — Phase 2 Stage F 상세
 - `docs/masterplan-v2.0.md` §7 — L3 상세 설계

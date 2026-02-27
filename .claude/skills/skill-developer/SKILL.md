@@ -23,8 +23,7 @@ description: Claude Code 스킬 생성 및 관리 가이드. 새 스킬 추가, 
 ```
 .claude/
 ├── hooks/
-│   ├── skill-activation-prompt.ps1   # PowerShell wrapper
-│   └── skill-activation-prompt.ts    # 메인 로직
+│   └── skill-activation-prompt.ts    # 메인 로직 (npx tsx 직접 호출)
 └── skills/
     ├── skill-rules.json              # 스킬 정의 (마스터 설정)
     └── {skill-name}/
@@ -34,14 +33,16 @@ description: Claude Code 스킬 생성 및 관리 가이드. 새 스킬 추가, 
 ### Hook 동작 흐름
 
 ```
-User Prompt → PowerShell Wrapper → TypeScript Hook
-                                        ↓
-                              skill-rules.json 로드
-                                        ↓
-                              키워드/패턴 매칭
-                                        ↓
-                              매칭된 스킬 출력 (stdout → Claude)
+User Prompt → npx tsx skill-activation-prompt.ts
+                        ↓
+              skill-rules.json 로드
+                        ↓
+              키워드/패턴 매칭
+                        ↓
+              매칭된 스킬 출력 (stdout → Claude)
 ```
+
+> **Note:** Hook은 `settings.local.json`에서 `npx tsx` 직접 호출로 등록. PowerShell wrapper 미사용.
 
 ### 현재 스킬 (4개)
 
@@ -128,7 +129,7 @@ echo '{"session_id":"test","prompt":"테스트 키워드1"}' | \
 |------|------|------|
 | 스킬 트리거 안됨 | JSON 문법 오류 | `jq . skill-rules.json`으로 검증 |
 | 스킬 트리거 안됨 | 키워드 누락 | 프롬프트에 키워드 포함 여부 확인 |
-| Hook 실행 안됨 | settings.local.json 미등록 | hooks 섹션 확인 |
+| Hook 실행 안됨 | settings.local.json 미등록 | hooks 섹션에 `npx tsx .claude/hooks/skill-activation-prompt.ts` 확인 |
 | Hook 실행 안됨 | npx tsx 미설치 | `npx tsx --version` 확인 |
 | False positive | 키워드 너무 일반적 | 더 구체적 키워드로 변경 |
 
@@ -137,6 +138,5 @@ echo '{"session_id":"test","prompt":"테스트 키워드1"}' | \
 ## 관련 파일
 
 - `.claude/skills/skill-rules.json` — 마스터 설정
-- `.claude/hooks/skill-activation-prompt.ts` — 메인 로직
-- `.claude/hooks/skill-activation-prompt.ps1` — Windows wrapper
+- `.claude/hooks/skill-activation-prompt.ts` — 메인 로직 (`npx tsx` 직접 호출)
 - `.claude/settings.local.json` — Hook 등록

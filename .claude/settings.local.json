@@ -12,7 +12,10 @@
       "Bash(git:*)",
       "Bash(find:*)",
       "Bash(python3:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(mkdir:*)",
+      "Bash(pip install:*)"
     ]
   },
   "hooks": {

@@ -12,7 +12,7 @@
 | 관계형 DB | SQLite | 로컬, 제로 설정 |
 | CLI | Typer (유력) / Click | Stage G 시작 시 최종 확정 |
 | 마크다운 출력 | Obsidian 호환 | 시각적 탐색 + 수동 편집 |
-| 웹 크롤링 | Requests + BeautifulSoup / Playwright | Phase 3에서 도입 |
+| 웹 크롤링 | Requests + BeautifulSoup / Playwright | Phase 4에서 도입 |
 | 개발 환경 | Windows 10, Git Bash, Claude Code | |
 
 ### 스택 원칙
@@ -105,14 +105,16 @@ pyproject.toml
 
 ## Shared Dependencies
 
-### Python 패키지 (Phase 1)
+### Python 패키지 (Phase 1: 데이터 파이프라인)
 - `pymupdf` — PDF 파싱
 - `chromadb` — 벡터 DB
 - `openai` — 임베딩 + GPT-4o mini
 - `anthropic` — Claude API
 - `pydantic` — 데이터 검증
-- `typer` 또는 `click` — CLI
 - `pyyaml` — config 파싱
+
+### Python 패키지 (Phase 2: 서비스 레이어, 추가분)
+- `typer` 또는 `click` — CLI
 - `rich` — CLI 출력 포매팅 (선택)
 
 ### 외부 서비스

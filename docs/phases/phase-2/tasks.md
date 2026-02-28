@@ -1,7 +1,7 @@
 # Phase 2: 서비스 레이어 — Tasks
 > Last Updated: 2026-02-28
 
-## Progress: 3/11 Tasks (27%)
+## Progress: 7/11 Tasks (64%)
 
 ---
 
@@ -23,22 +23,23 @@
 
 ---
 
-### Stage F: 콘텐츠 생성 (M) — 0/4
+### Stage F: 콘텐츠 생성 (M) — 4/4 ✅
 
-- [ ] F.1 `src/generation/content.py` 파이프라인
+- [x] F.1 `src/generation/content.py` 파이프라인
   - `generate_content()` — 토픽 → KU 검색 → 컨텍스트 조합 → LLM → 출력
   - 입력: topic (str), format (str), ku_ids (optional list)
   - KU 컨텍스트: claim + evidence_summary + counter_summary
-- [ ] F.2 프롬프트 템플릿 3종
+  - 모델: gpt-4.1-mini (config.yaml `models.generation`)
+- [x] F.2 프롬프트 템플릿 3종
   - `blog.txt` — 1,500-3,000자 블로그 포스트
   - `summary.txt` — 300-500자 개념 요약
   - `thread.txt` — 5-10개 항목 소셜미디어 스레드
-  - 변수: {topic}, {ku_context}, {format_instructions}
-- [ ] F.3 출처 KU ID 첨부 로직
-  - 생성 결과 끝에 "출처: ku-econ-001-xxxx, ..." 자동 첨부
-  - 마크다운 출력 시 KU 링크 포함
-- [ ] F.4 generations 테이블 기록
+  - 변수: {topic}, {ku_context}
+- [x] F.3 출처 KU ID 첨부 로직
+  - 생성 결과 끝에 `\n\n---\n출처: ku-xxx, ku-yyy` 자동 첨부
+- [x] F.4 generations 테이블 기록
   - mode: "content", format, prompt, output, ku_ids (JSON), rating (NULL)
+  - `insert_generation()`, `get_generation()` CRUD 헬퍼 추가 (`src/db/models.py`)
 
 ---
 

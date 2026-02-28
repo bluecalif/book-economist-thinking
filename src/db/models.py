@@ -277,3 +277,33 @@ def count_kus(conn: sqlite3.Connection, book_id: str) -> int:
         "SELECT COUNT(*) as cnt FROM knowledge_units WHERE book_id = ?", (book_id,)
     ).fetchone()
     return row["cnt"]
+
+
+# --- generations ---
+
+def insert_generation(
+    conn: sqlite3.Connection,
+    *,
+    id: str,
+    mode: str,
+    format: str,
+    prompt: str,
+    output: str,
+    ku_ids: list[str],
+    rating: int | None = None,
+) -> None:
+    conn.execute(
+        "INSERT INTO generations (id, mode, format, prompt, output, ku_ids, rating) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (id, mode, format, prompt, output, json.dumps(ku_ids), rating),
+    )
+    conn.commit()
+
+
+def get_generation(conn: sqlite3.Connection, gen_id: str) -> dict[str, Any] | None:
+    row = conn.execute("SELECT * FROM generations WHERE id = ?", (gen_id,)).fetchone()
+    if not row:
+        return None
+    d = dict(row)
+    d["ku_ids"] = json.loads(d["ku_ids"]) if d["ku_ids"] else []
+    return d

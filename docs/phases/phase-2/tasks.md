@@ -1,27 +1,25 @@
 # Phase 2: 서비스 레이어 — Tasks
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
-## Progress: 0/11 Tasks (0%)
+## Progress: 3/11 Tasks (27%)
 
 ---
 
-### Stage E: 의미 검색 (S) — 0/3
+### Stage E: 의미 검색 (S) — 3/3 ✅
 
-- [ ] E.1 `src/search/vector.py` 구현
+- [x] E.1 `src/search/vector.py` 구현
   - `search_kus()` — 쿼리 텍스트 → 임베딩 → ChromaDB 검색 → KU 반환
   - top_k 파라미터 (기본 10)
-  - similarity threshold (기본 0.5)
+  - similarity threshold (기본 0.6, 튜닝 완료)
   - 검색 결과 0건 시 "관련 KU 없음" 메시지 반환
-- [ ] E.2 검색 결과 포매팅 + threshold 튜닝
-  - 출력: claim, domain, confidence, similarity score
-  - Rich 포매팅 (테이블 형태)
-  - **threshold 튜닝 절차:**
-    - 초기값 0.5 → 10개 쿼리 테스트
-    - precision/recall 밸런스 확인 후 조정
-    - 검색 결과 0건 시 "관련 KU 없음" 메시지 반환
-- [ ] E.3 도메인 필터링
-  - ChromaDB metadata where 조건 (domain 필터)
-  - Phase 2는 단일 도메인이지만 구조 준비
+- [x] E.2 검색 결과 포매팅 + threshold 튜닝
+  - `format_results()` — 텍스트 테이블, `format_results_rich()` — Rich 테이블
+  - 출력: claim, domain, confidence, similarity score, KU ID
+  - **threshold 튜닝 결과:** 0.6 (10쿼리 테스트, precision 우선)
+    - 매몰비용 60%, 인플레이션 56%, 경쟁 60%, 기회비용 41%, 세금 47%
+- [x] E.3 도메인 필터링
+  - ChromaDB metadata where 조건 (`domain` 파라미터)
+  - 테스트 완료: `domain="경제"` 필터 정상 동작
 
 ---
 

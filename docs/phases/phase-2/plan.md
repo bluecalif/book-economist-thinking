@@ -1,7 +1,7 @@
 # Phase 2: 서비스 레이어 (Stage E~G)
-> Last Updated: 2026-02-27
-> Status: Planned
-> **전제:** Phase 1 완료 (raw_spans + KU + 임베딩 DB 확보)
+> Last Updated: 2026-02-28
+> Status: In Progress — Stage E 완료, Stage F 착수 대기
+> **전제:** Phase 1 완료 ✅ (raw_spans + KU + 임베딩 DB 확보)
 
 ## 1. Summary (개요)
 

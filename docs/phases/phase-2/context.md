@@ -1,5 +1,5 @@
 # Phase 2: 서비스 레이어 — Context
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
 ## 1. 핵심 파일
 
@@ -57,7 +57,7 @@ models:
 | # | 결정 | 근거 | 대안 | 영향 |
 |---|------|------|------|------|
 | 1 | Typer CLI | 타입 힌트 기반, Click보다 간결 | Click | Stage G CLI 구현 |
-| 2 | similarity threshold 초기값 0.5 | 일반적 시작점, 튜닝 예정 | 고정값 | E.2에서 조정 |
+| 2 | similarity threshold 0.6 확정 | 10쿼리 튜닝 완료, precision 우선 | 0.5 초기값 | E.2에서 조정 완료 |
 | 3 | 검색 결과 0건 시 메시지 반환 | UX 향상 | 빈 결과 | vector.py 반환값 |
 | 4 | 출처 KU ID 필수 첨부 | 생성물 신뢰성 | 선택적 | content.py 출력 |
 
@@ -91,6 +91,6 @@ models:
 - [ ] 템플릿 3종: blog, summary, thread
 
 ### 검색
-- [ ] similarity threshold 튜닝 완료
-- [ ] 검색 결과 0건 처리
-- [ ] 도메인 필터링 구조 준비
+- [x] similarity threshold 튜닝 완료 — 0.6 (10쿼리 테스트)
+- [x] 검색 결과 0건 처리 — "관련 KU 없음" 메시지
+- [x] 도메인 필터링 구조 준비 — `domain` 파라미터

@@ -1,5 +1,5 @@
 # Phase 1: 데이터 파이프라인 — Context
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
 ## 1. 핵심 파일
 
@@ -171,22 +171,22 @@ chapters[].pages[].text            →  raw_spans.text (페이지 단위, 1:1)
 
 ### 아키텍처
 - [x] L0 Raw → L1 KU 순서 준수
-- [ ] raw_spans 전건 DB 저장 + 건수 검증
-- [ ] KU 100+ 추출 + ChromaDB 임베딩
+- [x] raw_spans 전건 DB 저장 + 건수 검증 — 341건
+- [x] KU 100+ 추출 + ChromaDB 임베딩 — 997 KUs
 
 ### 지식 구조
-- [ ] KU 포맷: claim + evidence_summary + counter_summary
-- [ ] KU ID: `ku-{domain}-{book_seq}-{ku_seq}`
-- [ ] Maturity: M0 (자동추출) 기본값
-- [ ] source_spans: JSON array of raw_span ids
+- [x] KU 포맷: claim + evidence_summary + counter_summary
+- [x] KU ID: `ku-{domain}-{book_seq}-{ku_seq}`
+- [x] Maturity: M0 (자동추출) 기본값
+- [x] source_spans: JSON array of raw_span ids
 
 ### 데이터
 - [x] 5테이블 DDL (edges 포함) — Stage B 완료
 - [x] ChromaDB ku_embeddings 컬렉션 — Stage B 완료
-- [ ] ID 패턴 준수 (book_id, raw_span_id, ku_id)
+- [x] ID 패턴 준수 (book_id, raw_span_id, ku_id)
 
 ### 코딩
 - [x] 코드: English (변수명, 함수명) — Stage B 확인
 - [x] Raw SQL + 헬퍼 함수 (ORM 미사용) — Stage B 확인
-- [ ] 인코딩: utf-8-sig (read), utf-8 (write)
-- [ ] `PYTHONUTF8=1` 환경변수
+- [x] 인코딩: utf-8-sig (read), utf-8 (write)
+- [x] `PYTHONUTF8=1` 환경변수

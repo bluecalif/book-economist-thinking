@@ -1,5 +1,5 @@
 # Phase 1: 데이터 파이프라인 — Design Notes
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
 ## Stage C: JSON 파싱
 
@@ -118,15 +118,25 @@ data/chroma/.gitkeep    — NEW (gitignored 내용물)
 vault/.gitkeep          — NEW
 ```
 
-### Stage B (pending commit)
+### Stage B (07096fa)
 ```
-src/db/models.py        — NEW: SQLite DDL (5테이블, 6인덱스) + CRUD 헬퍼 (~230 lines)
-src/db/vectors.py       — NEW: ChromaDB 래퍼 (init/add/query/delete, ~60 lines)
+src/db/models.py        — NEW: SQLite DDL (5테이블, 6인덱스) + CRUD 헬퍼 (~280 lines)
+src/db/vectors.py       — NEW: ChromaDB 래퍼 (init/add/query/delete, ~63 lines)
 data/knowledge.db       — 자동 생성 (init_db 호출 시)
 ```
 
-### 미구현 (Stage C, D)
+### Stage C (67b21e7)
 ```
-src/ingest/pdf_parser.py    — Stage C
-src/ingest/ku_extractor.py  — Stage D
+src/ingest/pdf_parser.py — NEW: JSON → books + raw_spans 변환 (~150 lines)
+                           ingest_book(): text.json 로드 → 빈 페이지 필터 → DB 저장
+                           결과: 341 raw_spans (5챕터, 59 빈 페이지 제외)
+```
+
+### Stage D (4d33a2a)
+```
+src/ingest/ku_extractor.py — NEW: raw_spans → KU 추출 + 임베딩 (~380 lines)
+                             extract_kus_from_spans(): LLM API → JSON 파싱 → KU 생성
+                             3단계 fallback: JSON repair → 1x retry → skip+log
+                             결과: 997 KUs (claim 83%, JSON 파싱 100%)
+                             임베딩: text-embedding-3-large, 997건 ChromaDB upsert
 ```

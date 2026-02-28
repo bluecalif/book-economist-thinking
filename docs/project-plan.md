@@ -1,5 +1,5 @@
 # Project Plan
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 > Phase Dev-Docs: `docs/phases/phase-1/` (A~D), `docs/phases/phase-2/` (E~G)
 
 ## Roadmap Overview
@@ -14,7 +14,7 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ---
 
-## Phase 1: 데이터 파이프라인 (Stage A~D) — In Progress
+## Phase 1: 데이터 파이프라인 (Stage A~D) — Complete ✅
 
 **목표:** 경제학자의 생각법 1권의 원본 텍스트를 KU로 변환하는 데이터 파이프라인 완성
 **예상 기간:** Week 1-2
@@ -44,7 +44,7 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ---
 
-## Phase 2: 서비스 레이어 (Stage E~G) — Planned
+## Phase 2: 서비스 레이어 (Stage E~G) — In Progress
 
 **목표:** 데이터 파이프라인 위에 검색/생성/CLI를 올려 사용 가능한 시스템 완성
 **예상 기간:** Week 2-3

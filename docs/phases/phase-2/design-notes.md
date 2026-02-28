@@ -1,5 +1,5 @@
 # Phase 2: 서비스 레이어 — Design Notes
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
 ## Stage E: 의미 검색
 
@@ -21,9 +21,26 @@
 5. 검색 결과 0건 시: "관련 KU 없음" 메시지 반환
 ```
 
+### E.2 실측 결과 (threshold 0.6)
+
+| 쿼리 | 건수 | Top-1 유사도 | Top-1 Claim |
+|------|------|------------|-------------|
+| 매몰비용 | 3 | 60.4% | 매몰비용은 투자자의 손해 만회 심리를 교묘히 이용... |
+| 인플레이션 | 3 | 56.2% | 초인플레이션은 전쟁이나 경제 위기 등... |
+| 경쟁의 효과 | 3 | 60.3% | 경쟁은 소비자들이 질 좋은 상품을 싸게... |
+| 기회비용 | 3 | 41.2% | 변동비는 매출의 증감과 더불어... |
+| 세금 정책 | 3 | 46.8% | 국가는 세금, 공공요금, 금리... |
+| 시장 실패 | 2 | 42.1% | 외부비용이 경제 주체의... |
+| 독점 | 2 | 43.2% | 독과점 상태에서는 기업이... |
+| 무역 | 1 | 43.0% | 무역은 여러 단계를 거친 물물교환... |
+| 이자율 | 0 | N/A | (threshold 0.7이면 2건 반환) |
+| 가격 결정 | 1 | 40.2% | 판매자들이 가격을 담합하면... |
+
+**결론:** threshold 0.6은 precision 우선, 대부분 쿼리에서 관련 KU 반환. 이자율만 0건 (0.7이면 검색됨).
+
 ### 열린 질문 (Open Questions)
-- [ ] ChromaDB cosine distance vs L2 distance — 기본 cosine 유지 예정
-- [ ] 검색 쿼리 전처리 (한국어 형태소 분석) 필요 여부 — Phase 2에서는 raw 쿼리 사용
+- [x] ChromaDB cosine distance vs L2 distance — cosine 확정 (기존 임베딩과 일치)
+- [x] 검색 쿼리 전처리 (한국어 형태소 분석) 필요 여부 — raw 쿼리로 충분 (text-embedding-3-large가 한국어 처리)
 
 ---
 
@@ -131,19 +148,20 @@ created: 2026-02-27
 
 | Bug # | Module | Issue | Fix | File |
 |-------|--------|-------|-----|------|
-| (Phase 실행 시작 후 기록) | | | | |
+| E-1 | vector.py | threshold 0.35 → 전 쿼리 0건 | cosine distance 실측 0.39~0.51이므로 0.6으로 상향 | src/search/vector.py |
 
 ---
 
 ## 교훈 (Lessons Learned)
 
-(Phase 실행 중 축적)
+- ChromaDB cosine distance는 0~2 범위 (0=동일, 2=반대). 실측 top-1이 0.39~0.60이므로 threshold는 0.6이 적절.
+- `PYTHONUTF8=1` 환경변수가 없으면 Windows Bash에서 한국어 출력이 깨짐.
 
 ---
 
 ## Modified Files Summary
 
-(Phase 전체 변경 파일 트리 — 실행 시작 후 업데이트)
+### Stage E (pending commit)
 
 ```
 src/

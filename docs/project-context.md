@@ -1,5 +1,5 @@
 # Project Context
-> Last Updated: 2026-02-27
+> Last Updated: 2026-02-28
 
 ## Tech Stack
 
@@ -7,7 +7,7 @@
 |------|------|----------|
 | 언어 | Python | 3.12 (anaconda3) |
 | LLM API | Claude / GPT-4o / GPT-4o mini | KU 추출은 GPT-4o mini 우선 |
-| 임베딩 | text-embedding-3-small (OpenAI) | 비용 효율적 |
+| 임베딩 | text-embedding-3-large (OpenAI) | 정확도 우선 |
 | Vector DB | ChromaDB | 로컬, 13,000 KU 규모 충분 |
 | 관계형 DB | SQLite | 로컬, 제로 설정 |
 | CLI | Typer (유력) / Click | Stage G 시작 시 최종 확정 |

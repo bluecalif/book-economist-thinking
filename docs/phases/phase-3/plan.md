@@ -68,8 +68,8 @@ Phase 3 완료 후:
 ### 전체 흐름
 
 ```
-H.infra ($0) → H.pilot ($45-75) → I.pilot ($10-20) → Quality Gate
-                                                         ├─ PASS → H.full ($80-150) → I.full ($40-80) → J ($0)
+H.infra ($0) → H.pilot (~$1) → I.pilot (추정 $2-5) → Quality Gate
+                                                         ├─ PASS → H.full (~$23) → I.full (추정 $10-20) → J ($0)
                                                          └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 덕분에 비용 최소)
 ```
 
@@ -87,17 +87,19 @@ H.infra ($0) → H.pilot ($45-75) → I.pilot ($10-20) → Quality Gate
 
 **의존성:** Phase 2 완료
 
-### Stage H.pilot: 파일럿 인제스트 (~$45-75) — 3 Tasks
+### Stage H.pilot: 파일럿 인제스트 (~$1) — 3 Tasks
 
 **목표:** 4개 도메인 각 1권(경제는 기존 재사용, 3권 신규) 인제스트 + KU 품질 검증
 
 **파일럿 도서:** 도메인당 1권, 서로 다른 서술 유형(서술형/논증형/에세이형/기술형)
 - 경제/경영: 경제학자의 생각법 (기존 재사용, $0)
-- 역사/사회, 인문/자기계발, 과학/기술: 각 1권 신규 (~$15-25/권)
+- 역사/사회, 인문/자기계발, 과학/기술: 각 1권 신규 (~$0.28/권)
+
+> **실측 데이터 (econ-thinking 1권):** input $0.09 (220K tokens) + output $0.19 (110K tokens) = **$0.28/권**
 
 **의존성:** H.infra 완료
 
-### Stage I.pilot: 파일럿 그래프 (~$10-20) — 5 Tasks
+### Stage I.pilot: 파일럿 그래프 (추정 $2-5) — 5 Tasks
 
 **목표:** 4-5권 KU로 edge 생성 + 그래프 탐색 end-to-end 검증
 
@@ -120,13 +122,13 @@ H.infra ($0) → H.pilot ($45-75) → I.pilot ($10-20) → Quality Gate
 
 PASS → H.full 진행 / FAIL → 프롬프트 튜닝 후 재실행 (캐시 히트로 비용 최소)
 
-### Stage H.full: 나머지 83권 배치 (~$80-150) — 2 Tasks
+### Stage H.full: 나머지 83권 배치 (~$23) — 2 Tasks
 
 **목표:** 나머지 83권 인제스트 (파일럿/done 자동 skip)
 
 **의존성:** Quality Gate 통과
 
-### Stage I.full: 전체 그래프 + Dispute (~$40-80) — 4 Tasks
+### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 4 Tasks
 
 **목표:** 87권 전체 edge 생성 + Vault connections + Dispute axis
 
@@ -226,7 +228,7 @@ Phase 2 (완료) → H.infra → H.pilot → I.pilot → Quality Gate
 
 | 의존성 | 용도 | 비고 |
 |--------|------|------|
-| OpenAI API (GPT-4.1-mini) | KU 추출, edge 생성 | 파일럿 $55-95, 전체 추가 $120-230 |
+| OpenAI API (GPT-4.1-mini) | KU 추출, edge 생성 | 파일럿 ~$3-6, 전체 추가 ~$33-43 |
 | OpenAI API (text-embedding-3-large) | 임베딩 | $2-3 |
 | books-final-processor text.json | 87권 원본 텍스트 | H.2에서 1회 복사 |
 | books-final-processor CSV | 도서 메타데이터 | H.1에서 1회 참조 |
@@ -235,15 +237,18 @@ Phase 2 (완료) → H.infra → H.pilot → I.pilot → Quality Gate
 
 ## 8. 비용 추정
 
-| 단계 | 항목 | 추정 비용 |
-|------|------|----------|
-| Quality Gate 전 | 파일럿 KU 추출 (3권 신규) | $45-75 |
-| Quality Gate 전 | 파일럿 edge 생성 | $10-20 |
-| Quality Gate 전 소계 | | **$55-95** |
-| Quality Gate 후 | 나머지 83권 KU 추출 | $80-150 |
-| Quality Gate 후 | 전체 edge 생성 | $40-80 |
-| Quality Gate 후 소계 | | **$120-230** |
-| **Phase 3 합계** | | **$175-325** |
+> **실측 기반 (2026-03-01):** econ-thinking 1권 KU 추출 = input $0.09 (220K tokens) + output $0.19 (110K tokens) = **$0.28/권**
+> Edge 생성 비용은 아직 실측 데이터 없음 (추정치 사용)
 
-**vs 기존 계획:** 총 비용 유사하나, **검증 전 리스크 노출이 $150-300 → $55-95로 1/3 감소**
+| 단계 | 항목 | 비용 | 근거 |
+|------|------|------|------|
+| Quality Gate 전 | 파일럿 KU 추출 (3권 신규) | ~$1 | 실측 $0.28/권 × 3 |
+| Quality Gate 전 | 파일럿 edge 생성 | 추정 $2-5 | 미검증 |
+| Quality Gate 전 소계 | | **~$3-6** | |
+| Quality Gate 후 | 나머지 83권 KU 추출 | ~$23 | 실측 $0.28/권 × 83 |
+| Quality Gate 후 | 전체 edge 생성 | 추정 $10-20 | 미검증 |
+| Quality Gate 후 소계 | | **~$33-43** | |
+| **Phase 3 합계** | | **~$36-49** | KU 실측 + edge 추정 |
+
+**vs 기존 추정:** $175-325 → **~$36-49** (KU 추출 비용이 기존 추정의 ~1/60)
 **캐시 효과:** 프롬프트 튜닝 후 재실행 시 변경 안 된 span은 캐시 히트 → 추가 비용 ≈ $0

@@ -39,7 +39,7 @@
 
 ---
 
-### Stage H.pilot: 파일럿 인제스트 (~$45-75) — 0/3
+### Stage H.pilot: 파일럿 인제스트 (~$1) — 0/3
 
 - [ ] H.6p 배치 처리 스크립트 (`scripts/batch_ingest.py`)
   - `books_catalog.yaml` 읽기 → status 기반 필터링
@@ -60,7 +60,7 @@
 
 ---
 
-### Stage I.pilot: 파일럿 그래프 (~$10-20) — 0/5
+### Stage I.pilot: 파일럿 그래프 (추정 $2-5) — 0/5
 
 - [ ] I.1p `src/graph/edge_builder.py` — edge 생성 모듈
   - `src/db/models.py`에 edge CRUD 헬퍼 추가 (insert_edge, list_edges_by_ku 등)
@@ -98,7 +98,7 @@
 
 ---
 
-### Stage H.full: 나머지 83권 배치 (~$80-150) — 0/2
+### Stage H.full: 나머지 83권 배치 (~$23) — 0/2
 
 - [ ] H.9 나머지 83권 배치 인제스트
   - `python scripts/batch_ingest.py --all` (done/pilot 자동 skip)
@@ -111,7 +111,7 @@
 
 ---
 
-### Stage I.full: 전체 그래프 + Dispute (~$40-80) — 0/4
+### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 0/4
 
 - [ ] I.6 전체 within-book edge 생성
   - 87권 각각 실행 (파일럿 done 자동 skip)

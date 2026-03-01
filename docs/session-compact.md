@@ -8,7 +8,7 @@ Phase 3 계획을 비판적으로 검토하고, "Pilot First → Graph → Full 
 
 ## Completed
 - [x] **Phase 3 기존 계획 비판적 검토**: 87권 일괄 → 파일럿 전환 필요성 확인
-- [x] **KU 파이프라인 비용/품질 분석**: 1권당 ~$15-25, 341 spans → 997 KUs, 100% parse 성공률
+- [x] **KU 파이프라인 비용/품질 분석**: 1권당 **$0.28** (실측: input $0.09/220K tokens + output $0.19/110K tokens), 341 spans → 997 KUs, 100% parse 성공률
 - [x] **캐시 부재 문제 발견**: 현재 코드에 LLM 응답 캐시/체크포인트 전혀 없음
 - [x] **개정 계획 수립**: Plan 에이전트로 상세 설계 (H.infra → H.pilot → I.pilot → Quality Gate → H.full → I.full → J)
 - [x] **사용자 결정 확인**: 도메인당 1권 파일럿 OK, KU+Graph 함께 검증, LLM 캐시 핵심
@@ -48,7 +48,7 @@ acc1942 phase-2 Stage G: CLI + Vault 렌더러 + 통합 테스트
 - [ ] **Phase 3 Stage H.infra 실행 착수**
 
 ## Key Decisions
-- **Pilot First 전략 채택**: 87권 일괄 → 4권 파일럿(도메인당 1권) → Quality Gate → 전체 확장. 검증 전 리스크 노출 $55-95 (기존 $150-300의 1/3)
+- **Pilot First 전략 채택**: 87권 일괄 → 4권 파일럿(도메인당 1권) → Quality Gate → 전체 확장. 검증 전 리스크 ~$3-6 (실측 기반)
 - **LLM 응답 캐시 도입**: `src/ingest/llm_cache.py` + `data/llm_cache.db`. hash(model+prompt+text) 키. 재실행 비용 $0
 - **KU + Graph 함께 파일럿 검증**: end-to-end 품질 확인, 별도 검증 대비 판단 포인트 축소
 - **파일럿 도서 선정**: 도메인당 1권, 경제는 기존 재사용. 구체적 도서는 카탈로그 생성 후 결정
@@ -70,8 +70,8 @@ acc1942 phase-2 Stage G: CLI + Vault 렌더러 + 통합 테스트
 
 ### Phase 3 전체 흐름
 ```
-H.infra ($0) → H.pilot ($45-75) → I.pilot ($10-20) → Quality Gate
-                                                         ├─ PASS → H.full ($80-150) → I.full ($40-80) → J ($0)
+H.infra ($0) → H.pilot (~$1) → I.pilot (추정 $2-5) → Quality Gate
+                                                         ├─ PASS → H.full (~$23) → I.full (추정 $10-20) → J ($0)
                                                          └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 $0)
 ```
 

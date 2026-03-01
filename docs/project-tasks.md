@@ -50,11 +50,11 @@
 → 상세: `docs/phases/phase-3/tasks.md`
 
 ### Stage H.infra: 인프라 준비 ($0) — 0/6
-### Stage H.pilot: 파일럿 인제스트 (~$45-75) — 0/3
-### Stage I.pilot: 파일럿 그래프 (~$10-20) — 0/5
+### Stage H.pilot: 파일럿 인제스트 (~$1) — 0/3
+### Stage I.pilot: 파일럿 그래프 (추정 $2-5) — 0/5
 ### Quality Gate: 품질 판정
-### Stage H.full: 전체 배치 (~$80-150) — 0/2
-### Stage I.full: 전체 그래프 + Dispute (~$40-80) — 0/4
+### Stage H.full: 전체 배치 (~$23) — 0/2
+### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 0/4
 ### Stage J: Generation 확장 + Hybrid ($0) — 0/3
 
 ---
@@ -78,6 +78,6 @@
 | 13 | text.json 프로젝트 내 복사 (standalone) | Phase 3 | 2026-03-01 | 프로젝트가 모든 지식 소스 자체 포함 |
 | 14 | domain_short 매핑: hist/econ/humn/sci | Phase 3 | 2026-03-01 | KU ID 4자리 약어, 기존 econ 호환 |
 | 15 | 기존 domain "경제"→"경제/경영" 통일 | Phase 3 | 2026-03-01 | 4개 카테고리 체계로 일관성 확보 |
-| 16 | Pilot First 전략 채택 | Phase 3 | 2026-03-01 | 87권 일괄 → 4권 파일럿 → Quality Gate → 전체. 검증 전 리스크 $55-95 (기존의 1/3) |
+| 16 | Pilot First 전략 채택 | Phase 3 | 2026-03-01 | 87권 일괄 → 4권 파일럿 → Quality Gate → 전체. 검증 전 리스크 ~$3-6 (실측 기반) |
 | 17 | LLM 응답 캐시 도입 | Phase 3 | 2026-03-01 | `llm_cache.py` + `llm_cache.db`. 프롬프트 튜닝 후 재실행 비용 $0 |
 | 18 | KU + Graph 함께 파일럿 검증 | Phase 3 | 2026-03-01 | end-to-end 품질 확인, 별도 검증 대비 판단 포인트 축소 |

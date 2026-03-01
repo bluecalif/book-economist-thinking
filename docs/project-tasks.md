@@ -18,7 +18,7 @@
 |-------|--------|----------|--------------|------|
 | Phase 1: 데이터 파이프라인 (A~D) | Complete ✅ | 18/18 Tasks (100%) | 전체 완료 | `4d33a2a` |
 | Phase 2: 서비스 레이어 (E~G) | Complete ✅ | 11/11 Tasks (100%) | 전체 완료 | `acc1942` |
-| Phase 3: 87권 확장 + 그래프 (H~J) | Planning | 0/15 Tasks (0%) | Stage H 계획 완료 | dev-docs: `docs/phases/phase-3/` |
+| Phase 3: 87권 확장 + 그래프 (H~J) | Planning | 0/23 Tasks (0%) | Stage H.infra 착수 대기 | dev-docs: `docs/phases/phase-3/` |
 | Phase 4: 진화 (Evolution) | Planned | - | - | Phase 3 완료 후 |
 | Phase 5: 웹 UI | Conditional | - | - | 가치 검증 통과 시 |
 
@@ -45,13 +45,17 @@
 
 ---
 
-## Phase 3 Tasks (0/15)
+## Phase 3 Tasks (0/23) — Pilot First 전략
 
 → 상세: `docs/phases/phase-3/tasks.md`
 
-### Stage H: 87권 마이그레이션 + 배치 (L) — 0/7
-### Stage I: Graph Layer (M) — 0/5
-### Stage J: Generation 확장 + Hybrid (M) — 0/3
+### Stage H.infra: 인프라 준비 ($0) — 0/6
+### Stage H.pilot: 파일럿 인제스트 (~$45-75) — 0/3
+### Stage I.pilot: 파일럿 그래프 (~$10-20) — 0/5
+### Quality Gate: 품질 판정
+### Stage H.full: 전체 배치 (~$80-150) — 0/2
+### Stage I.full: 전체 그래프 + Dispute (~$40-80) — 0/4
+### Stage J: Generation 확장 + Hybrid ($0) — 0/3
 
 ---
 
@@ -74,3 +78,6 @@
 | 13 | text.json 프로젝트 내 복사 (standalone) | Phase 3 | 2026-03-01 | 프로젝트가 모든 지식 소스 자체 포함 |
 | 14 | domain_short 매핑: hist/econ/humn/sci | Phase 3 | 2026-03-01 | KU ID 4자리 약어, 기존 econ 호환 |
 | 15 | 기존 domain "경제"→"경제/경영" 통일 | Phase 3 | 2026-03-01 | 4개 카테고리 체계로 일관성 확보 |
+| 16 | Pilot First 전략 채택 | Phase 3 | 2026-03-01 | 87권 일괄 → 4권 파일럿 → Quality Gate → 전체. 검증 전 리스크 $55-95 (기존의 1/3) |
+| 17 | LLM 응답 캐시 도입 | Phase 3 | 2026-03-01 | `llm_cache.py` + `llm_cache.db`. 프롬프트 튜닝 후 재실행 비용 $0 |
+| 18 | KU + Graph 함께 파일럿 검증 | Phase 3 | 2026-03-01 | end-to-end 품질 확인, 별도 검증 대비 판단 포인트 축소 |

@@ -74,9 +74,10 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ---
 
-## Phase 3: 87권 확장 + 그래프 레이어 (Stage H~J) — In Progress
+## Phase 3: 87권 확장 + 그래프 레이어 (Stage H~J) — In Progress (Pilot First)
 
 **목표:** 87권 배치 처리 + L2 Graph + L3 아이디어 생성 + Hybrid Search
+**전략:** Pilot First — 4권 파일럿 → Quality Gate → 전체 확장
 **예상 기간:** 2-4주
 **레이어:** L0+L1 확장 (87권), L2 Graph, L3 Generation (확장)
 **전제:** Phase 2 완료
@@ -84,23 +85,36 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ### Stages
 
-| Stage | 이름 | 범위 | 크기 |
-|-------|------|------|------|
-| H | 87권 마이그레이션 + 배치 | text.json 복사, 카탈로그, 코드 수정, 배치 처리 | L |
-| I | Graph Layer | edge 자동 생성, 그래프 탐색, dispute axis | M |
-| J | Generation 확장 + Hybrid | 아이디어 생성, Vector+Graph 복합 검색 | M |
+| Stage | 이름 | 범위 | 크기 | 비용 |
+|-------|------|------|------|------|
+| H.infra | 인프라 준비 | 카탈로그, 데이터 마이그레이션, 코드 수정, LLM 캐시 | M | $0 |
+| H.pilot | 파일럿 인제스트 | 4권(도메인당 1권) 인제스트 + KU 품질 검증 | L | $45-75 |
+| I.pilot | 파일럿 그래프 | edge 생성 + 그래프 탐색 end-to-end 검증 | M | $10-20 |
+| Quality Gate | 품질 판정 | parse ≥95%, claim ≥80%, edge 적합도 ≥60-70% | - | $0 |
+| H.full | 전체 배치 | 나머지 83권 배치 인제스트 | L | $80-150 |
+| I.full | 전체 그래프 | 전체 edge 생성 + Dispute axis | L | $40-80 |
+| J | Generation 확장 | 아이디어 생성 + Vector+Graph 하이브리드 검색 | M | $0 |
+
+### 전체 흐름
+
+```
+H.infra ($0) → H.pilot ($45-75) → I.pilot ($10-20) → Quality Gate
+                                                         ├─ PASS → H.full ($80-150) → I.full ($40-80) → J ($0)
+                                                         └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 $0)
+```
 
 ### 산출물
 - 87권 text.json → `data/raw/` (standalone)
 - `books_catalog.yaml` — 87권 메타데이터
+- `src/ingest/llm_cache.py` + `data/llm_cache.db` — LLM 응답 캐시
 - `scripts/batch_ingest.py` — 배치 처리
-- 10,000-15,000 KU + 75,000+ ChromaDB embeddings
-- `src/graph/edge_builder.py`, `src/graph/traversal.py`
+- ~75,000+ KU + ChromaDB embeddings
+- `src/graph/edge_builder.py`, `src/graph/traversal.py`, `src/graph/dispute.py`
 - `src/generation/idea.py`, `src/search/hybrid.py`
 - 4개 도메인 Vault 구조
 
 ### 완료 기준
-- `ks stats` → books=87, spans≥25,000, kus≥75,000
+- `ks stats` → books=87, spans≥25,000, kus≥75,000, chroma≥75,000
 - `ks explore ku-id --depth 2` → 연결된 KU 탐색
 - `ks generate idea --mode business --domains 경제/경영,과학/기술` → 아이디어 생성
 - 4개 도메인 간 dispute 축 자동 식별
@@ -155,6 +169,6 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ──→ Phase 5
 |-------|------|------|----------|
 | Phase 1 | 2026-02 | 2026-02-28 ✅ | $1-3 |
 | Phase 2 | 2026-02-28 | 2026-03-01 ✅ | $3-10 |
-| Phase 3 | 2026-03-01 | +2-4주 | $150-300 |
+| Phase 3 | 2026-03-01 | +2-4주 | $175-325 (파일럿 $55-95 + 전체 $120-230) |
 | Phase 4 | Phase 3 완료 후 | +2-4주 | $20-50 |
 | Phase 5 | 조건부 | TBD | TBD |

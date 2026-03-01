@@ -90,12 +90,13 @@ generations (id TEXT PK, mode, format, prompt, output, ku_ids JSON, rating INT, 
 ```
 src/
 ├── cli.py
-├── ingest/ (pdf_parser.py, ku_extractor.py)
-├── search/ (vector.py)
-├── generation/ (content.py, templates/)
+├── ingest/ (pdf_parser.py, ku_extractor.py, llm_cache.py)
+├── search/ (vector.py, hybrid.py)
+├── generation/ (content.py, idea.py, templates/)
+├── graph/ (edge_builder.py, traversal.py, dispute.py)
 ├── db/ (models.py, vectors.py)
 └── vault/ (renderer.py)
-data/ (knowledge.db, chroma/, raw/)
+data/ (knowledge.db, llm_cache.db, chroma/, raw/)
 vault/ (Obsidian 호환 마크다운)
 config.yaml
 pyproject.toml
@@ -123,6 +124,9 @@ pyproject.toml
 
 ### Python 패키지 (Phase 3: 87권 확장, 추가분)
 - 없음 (기존 패키지로 충분)
+
+### 데이터베이스 (Phase 3 추가)
+- `data/llm_cache.db` — LLM 응답 캐시 (SQLite, hash 기반 키, 재실행 비용 $0)
 
 ### 기존 자산
 - `55bbe4_경제학자의_생각법_text.json` — Phase 1에서 사용한 원본

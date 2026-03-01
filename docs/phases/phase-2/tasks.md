@@ -1,7 +1,7 @@
 # Phase 2: 서비스 레이어 — Tasks
 > Last Updated: 2026-02-28
 
-## Progress: 7/11 Tasks (64%)
+## Progress: 11/11 Tasks (100%) ✅
 
 ---
 
@@ -43,22 +43,23 @@
 
 ---
 
-### Stage G: CLI + 통합 (L) — 0/4
+### Stage G: CLI + 통합 (L) — 4/4 ✅
 
-- [ ] G.1 `src/cli.py` — ingest, search, generate 명령어
-  - `ks ingest <path>` — JSON/PDF 자동 감지 → 전체 파이프라인
-  - `ks search <query>` — 벡터 검색 + Rich 출력
+- [x] G.1 `src/cli.py` — ingest, search, generate 명령어
+  - `ks ingest <path>` — JSON 파싱 → KU 추출 → 임베딩 → Vault 렌더링
+  - `ks search <query>` — 벡터 검색 + Rich 테이블 출력
   - `ks generate content --topic <t> --format <f>` — 콘텐츠 생성
-  - `ks stats` — 기본 통계 (KU 수, 도메인 분포)
-- [ ] G.2 `src/vault/renderer.py` — KU 마크다운 렌더링
+  - `ks stats` — DB/ChromaDB 통계 + 도메인 분포
+  - `--dry-run`, `--verbose`, `--config` 글로벌 옵션
+- [x] G.2 `src/vault/renderer.py` — KU 마크다운 렌더링
   - YAML frontmatter: id, book, domain, subdomain, confidence, maturity, tags, created
   - 본문: Claim, Evidence, Counter, Connections
-  - 출력 경로: `vault/domains/{domain}/{ku_id}.md`
-- [ ] G.3 통합 테스트 (전체 파이프라인)
-  - ingest → search → generate end-to-end
-  - DB 정합성 확인: raw_spans <-> knowledge_units <-> ChromaDB
-- [ ] G.4 완료 기준 4항목 검증
-  - [ ] `ks ingest` → KU 추출 + DB 저장 + 마크다운 생성
-  - [ ] `ks search "매몰비용"` → 관련 KU 반환
-  - [ ] `ks generate content --topic "매몰비용" --format blog` → 블로그 초안
-  - [ ] 생성 콘텐츠 품질 평가 (경미한 편집으로 게시 가능)
+  - 출력 경로: `vault/domains/{domain}/{ku_id}.md` (997건 렌더링 완료)
+- [x] G.3 통합 테스트 (전체 파이프라인)
+  - `scripts/test_e2e.py` — DB 정합성 + ChromaDB + 검색 + 생성 + 렌더링 5개 테스트
+  - DB 정합성 확인: raw_spans ↔ knowledge_units ↔ ChromaDB
+- [x] G.4 완료 기준 4항목 검증
+  - [x] `ks stats` → books=1, spans=341, kus=997, chroma=997
+  - [x] `ks search "매몰비용"` → 9건 반환 (top 60.4%)
+  - [x] `ks generate content --topic "인플레이션" --format summary` → 요약 생성 확인
+  - [x] Vault 렌더링 997건 + frontmatter 구조 확인

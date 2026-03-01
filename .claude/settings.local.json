@@ -15,7 +15,11 @@
       "Bash(ls:*)",
       "Bash(python:*)",
       "Bash(mkdir:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(PYTHONUTF8=1 python:*)",
+      "Bash(xargs wc:*)",
+      "Bash(pip show:*)",
+      "Bash(xargs grep:*)"
     ]
   },
   "hooks": {

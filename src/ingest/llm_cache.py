@@ -33,8 +33,9 @@ def _get_conn(db_path: str | Path | None = None) -> sqlite3.Connection:
     """캐시 DB 연결 + 테이블 생성."""
     path = Path(db_path) if db_path else _DEFAULT_DB_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(path))
+    conn = sqlite3.connect(str(path), timeout=30)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
     conn.executescript(DDL)
     return conn
 

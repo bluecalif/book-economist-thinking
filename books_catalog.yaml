@@ -323,7 +323,7 @@ books:
   year: 2020
   topic: 능력주의 비판
   json_file: 6d8fdf_공정하다는_착각_text.json
-  status: pending
+  status: pilot
 - id: sci-009
   title: 과학이 필요한 시간
   author: 궤도
@@ -563,7 +563,7 @@ books:
   year: 2022
   topic: 판단 오류
   json_file: 42b92a_노이즈_text.json
-  status: pending
+  status: pilot
 - id: sci-015
   title: 노화의 종말
   author: 데이비스 싱클레어
@@ -683,7 +683,7 @@ books:
   year: 2017
   topic: 알고리즘 불공정성
   json_file: b718cc_대량살상_수학무기_text.json
-  status: pending
+  status: pilot
 - id: econ-027
   title: 대서울의 길
   author: 김시덕

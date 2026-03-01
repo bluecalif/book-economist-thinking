@@ -9,6 +9,7 @@ import json
 import logging
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -126,6 +127,66 @@ def call_llm(
     )
 
 
+# --- Span-level LLM Processing ---
+
+
+def _process_span_llm(
+    client: OpenAI,
+    span: dict[str, Any],
+    model: str,
+    cache_db_path: str | Path | None,
+    span_index: int,
+    total_spans: int,
+) -> dict[str, Any]:
+    """단일 span에 대해 LLM 호출 + JSON 파싱 수행 (DB 접근 없음).
+
+    Returns:
+        dict with keys: span_id, page, kus, error, span_index
+    """
+    span_id = span["id"]
+    page = span["page"]
+    text = span["text"]
+
+    logger.info("[%d/%d] Processing span %s (page %d)...", span_index + 1, total_spans, span_id, page)
+
+    # 1차 시도
+    raw_response = ""
+    kus = None
+    try:
+        raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
+        kus = parse_kus_json(raw_response)
+    except Exception as e:
+        logger.warning("LLM call failed for %s: %s", span_id, e)
+
+    # 1x 재시도
+    if kus is None:
+        logger.info("Retry for %s...", span_id)
+        time.sleep(1)
+        try:
+            raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
+            kus = parse_kus_json(raw_response)
+        except Exception as e:
+            logger.warning("Retry failed for %s: %s", span_id, e)
+
+    if kus is None:
+        return {
+            "span_id": span_id,
+            "page": page,
+            "kus": None,
+            "error": "JSON parse failed after retry",
+            "response_preview": raw_response[:500],
+            "span_index": span_index,
+        }
+
+    return {
+        "span_id": span_id,
+        "page": page,
+        "kus": kus,
+        "error": None,
+        "span_index": span_index,
+    }
+
+
 # --- Extraction Pipeline ---
 
 def extract_kus_from_spans(
@@ -139,12 +200,14 @@ def extract_kus_from_spans(
     sample_pages: list[int] | None = None,
     delay: float = 0.5,
     cache_db_path: str | Path | None = None,
+    max_workers: int = 1,
 ) -> dict[str, Any]:
     """전체 KU 추출 파이프라인.
 
     Args:
         sample_pages: 특정 페이지만 처리 (D.1 테스트용). None이면 전체.
-        delay: API 호출 간 대기 (초).
+        delay: API 호출 간 대기 (초). max_workers>1일 때는 무시됨.
+        max_workers: LLM 병렬 호출 수. 1이면 순차, >1이면 ThreadPoolExecutor 사용.
 
     Returns:
         metrics dict (D.5 검증용).
@@ -177,41 +240,56 @@ def extract_kus_from_spans(
 
     all_kus: list[dict[str, Any]] = []
 
-    for i, span in enumerate(spans):
-        span_id = span["id"]
-        page = span["page"]
-        text = span["text"]
+    # --- LLM 호출: 병렬 또는 순차 ---
+    if max_workers > 1:
+        logger.info("Parallel mode: max_workers=%d for %d spans", max_workers, total_spans)
+        llm_results: list[dict[str, Any]] = [{}] * total_spans  # placeholder
 
-        logger.info("[%d/%d] Processing span %s (page %d)...", i + 1, total_spans, span_id, page)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_idx = {
+                executor.submit(
+                    _process_span_llm, client, span, model, cache_db_path, i, total_spans
+                ): i
+                for i, span in enumerate(spans)
+            }
+            for future in as_completed(future_to_idx):
+                idx = future_to_idx[future]
+                try:
+                    llm_results[idx] = future.result()
+                except Exception as e:
+                    span = spans[idx]
+                    logger.error("Unexpected error for span %s: %s", span["id"], e)
+                    llm_results[idx] = {
+                        "span_id": span["id"],
+                        "page": span["page"],
+                        "kus": None,
+                        "error": str(e),
+                        "response_preview": "",
+                        "span_index": idx,
+                    }
+    else:
+        # 순차 처리 (기존 방식)
+        llm_results = []
+        for i, span in enumerate(spans):
+            result = _process_span_llm(client, span, model, cache_db_path, i, total_spans)
+            llm_results.append(result)
+            if delay > 0 and i < total_spans - 1:
+                time.sleep(delay)
 
-        # Stage 1: LLM 호출
-        raw_response = ""
-        kus = None
-        try:
-            raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
-            kus = parse_kus_json(raw_response)
-        except Exception as e:
-            logger.warning("LLM call failed for %s: %s", span_id, e)
+    # --- 결과를 span 순서대로 순차 DB 저장 ---
+    for result in llm_results:
+        span_id = result["span_id"]
+        page = result["page"]
+        kus = result.get("kus")
 
-        # Stage 2: 1x 재시도
-        if kus is None:
-            logger.info("Retry for %s...", span_id)
-            time.sleep(1)
-            try:
-                raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
-                kus = parse_kus_json(raw_response)
-            except Exception as e:
-                logger.warning("Retry failed for %s: %s", span_id, e)
-
-        # Stage 3: 실패 로그
         if kus is None:
             failed_spans.append({
                 "span_id": span_id,
                 "page": page,
-                "error": "JSON parse failed after retry",
-                "response_preview": raw_response[:500],
+                "error": result.get("error", "unknown"),
+                "response_preview": result.get("response_preview", ""),
             })
-            logger.warning("SKIP %s: JSON parse failed", span_id)
+            logger.warning("SKIP %s: %s", span_id, result.get("error"))
             continue
 
         successful_parses += 1
@@ -219,7 +297,7 @@ def extract_kus_from_spans(
         if len(kus) > 0:
             pages_with_claims += 1
 
-        # D.3: KU DB 저장
+        # D.3: KU DB 저장 (순차)
         for ku_data in kus:
             ku_seq += 1
             ku_id = f"ku-{domain_short}-{book_seq}-{ku_seq:04d}"
@@ -255,9 +333,6 @@ def extract_kus_from_spans(
                 "source_span": span_id,
             })
             total_kus_extracted += 1
-
-        if delay > 0 and i < total_spans - 1:
-            time.sleep(delay)
 
     # D.4: 임베딩 생성 + ChromaDB 저장
     if all_kus:

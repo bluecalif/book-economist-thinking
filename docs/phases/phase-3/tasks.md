@@ -1,35 +1,35 @@
 # Phase 3: 87권 확장 + 그래프 레이어 — Tasks
 > Last Updated: 2026-03-01
 
-## Progress: 0/23 Tasks (0%)
+## Progress: 6/23 Tasks (26%)
 
 ---
 
-### Stage H.infra: 인프라 준비 (API 비용 $0) — 0/6
+### Stage H.infra: 인프라 준비 (API 비용 $0) — 6/6 ✅
 
-- [ ] H.1 북 카탈로그 생성 (`scripts/build_catalog.py` → `books_catalog.yaml`)
+- [x] H.1 북 카탈로그 생성 (`scripts/build_catalog.py` → `books_catalog.yaml`)
   - CSV(`utf-8-sig`) + JSON 파일 목록 매칭 (87/87 확인됨)
   - 도메인별 book_id 할당: econ-thinking-001(기존) + econ-002~028, hist-001~018, humn-001~018, sci-001~023
   - status 필드: done(기존 1권), pilot(도메인당 1권), pending(나머지)
   - domain_short_map 포함
-- [ ] H.2 데이터 마이그레이션 (`scripts/migrate_data.py`)
+- [x] H.2 데이터 마이그레이션 (`scripts/migrate_data.py`)
   - 소스: `C:\Projects-2026\maintenance\books-final-processor\data\output\text\`
   - 대상: `data/raw/{도메인-하이픈}/` (4개 디렉터리)
   - 87개 파일 복사, 이미 존재 시 스킵 (멱등)
   - 검증: 87파일 존재 + JSON 파싱 가능
-- [ ] H.3 `ku_extractor.py` domain_short 파라미터화
+- [x] H.3 `ku_extractor.py` domain_short 파라미터화
   - `DOMAIN_SHORT_MAP` 상수 추가 (모듈 상단)
   - line 154: `domain_short = "econ"` → `DOMAIN_SHORT_MAP.get(domain, ...)`
   - 기존 `domain="경제"` 레거시 호환 유지
-- [ ] H.4 `renderer.py` 슬래시 도메인 경로 처리
+- [x] H.4 `renderer.py` 슬래시 도메인 경로 처리
   - `_domain_to_dir(domain)` 헬퍼: `역사/사회` → `역사-사회`
   - line 42: `domain_dir = output_dir / "domains" / _domain_to_dir(domain)`
-- [ ] H.5 `config.yaml` 수정 + 기존 DB 도메인 통일
+- [x] H.5 `config.yaml` 수정 + 기존 DB 도메인 통일
   - `books` 섹션 제거, `paths.catalog`, `batch` 섹션 추가
   - 기존 DB: `UPDATE books SET domain='경제/경영' WHERE domain='경제'`
   - 기존 DB: `UPDATE knowledge_units SET domain='경제/경영' WHERE domain='경제'`
   - 기존 `vault/domains/경제/` → `경제-경영/`으로 재렌더링
-- [ ] H.cache LLM 응답 캐시 레이어 (`src/ingest/llm_cache.py`)
+- [x] H.cache LLM 응답 캐시 레이어 (`src/ingest/llm_cache.py`)
   - 캐시 키: `hash(model + system_prompt + user_prompt_text)`
   - 저장소: `data/llm_cache.db` (SQLite)
   - cache hit → DB 응답 반환 ($0), cache miss → API 호출 + 저장

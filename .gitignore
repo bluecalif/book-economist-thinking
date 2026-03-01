@@ -26,3 +26,7 @@ config.yaml
 
 # Raw parsing data (large)
 55bbe48ee53666b54ce523d0ba4166b7.json
+data/raw/**/*.json
+
+# LLM cache
+data/llm_cache.db

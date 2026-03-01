@@ -28,6 +28,16 @@ from src.db.vectors import add_embeddings, init_chroma
 
 logger = logging.getLogger(__name__)
 
+# --- Domain Mapping ---
+
+DOMAIN_SHORT_MAP = {
+    "경제/경영": "econ",
+    "역사/사회": "hist",
+    "인문/자기계발": "humn",
+    "과학/기술": "sci",
+    "경제": "econ",  # 레거시 호환
+}
+
 # --- Prompt ---
 
 SYSTEM_PROMPT = """\
@@ -99,18 +109,21 @@ def call_llm(
     client: OpenAI,
     chunk_text: str,
     model: str = "gpt-4.1-mini",
+    cache_db_path: str | Path | None = None,
 ) -> str:
-    """OpenAI API 호출 → 응답 텍스트 반환."""
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": USER_PROMPT_TEMPLATE.format(chunk_text=chunk_text)},
-        ],
+    """OpenAI API 호출 → 응답 텍스트 반환 (캐시 사용)."""
+    from src.ingest.llm_cache import get_or_call
+
+    user_text = USER_PROMPT_TEMPLATE.format(chunk_text=chunk_text)
+    return get_or_call(
+        client,
+        model,
+        SYSTEM_PROMPT,
+        user_text,
         temperature=0.3,
         max_tokens=2000,
+        cache_db_path=cache_db_path,
     )
-    return response.choices[0].message.content or ""
 
 
 # --- Extraction Pipeline ---
@@ -125,6 +138,7 @@ def extract_kus_from_spans(
     embedding_model: str = "text-embedding-3-large",
     sample_pages: list[int] | None = None,
     delay: float = 0.5,
+    cache_db_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """전체 KU 추출 파이프라인.
 
@@ -151,7 +165,7 @@ def extract_kus_from_spans(
 
     # book_seq from book_id (econ-thinking-001 → 001)
     book_seq = book_id.split("-")[-1]
-    domain_short = "econ"  # 경제 → econ
+    domain_short = DOMAIN_SHORT_MAP.get(domain, domain[:4].lower())
 
     # Metrics
     total_spans = len(spans)
@@ -174,7 +188,7 @@ def extract_kus_from_spans(
         raw_response = ""
         kus = None
         try:
-            raw_response = call_llm(client, text, model=model)
+            raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
             kus = parse_kus_json(raw_response)
         except Exception as e:
             logger.warning("LLM call failed for %s: %s", span_id, e)
@@ -184,7 +198,7 @@ def extract_kus_from_spans(
             logger.info("Retry for %s...", span_id)
             time.sleep(1)
             try:
-                raw_response = call_llm(client, text, model=model)
+                raw_response = call_llm(client, text, model=model, cache_db_path=cache_db_path)
                 kus = parse_kus_json(raw_response)
             except Exception as e:
                 logger.warning("Retry failed for %s: %s", span_id, e)
@@ -356,7 +370,16 @@ if __name__ == "__main__":
 
     db_path = Path(__file__).resolve().parents[2] / cfg["paths"]["db"]
     chroma_dir = Path(__file__).resolve().parents[2] / cfg["paths"]["chroma"]
-    book_cfg = cfg["books"][0]
+
+    # 카탈로그에서 첫 번째 done 책 로드
+    catalog_path = Path(__file__).resolve().parents[2] / cfg["paths"]["catalog"]
+    with open(catalog_path, encoding="utf-8") as cf:
+        catalog = yaml.safe_load(cf)
+    book_cfg = catalog["books"][0]
+    for b in catalog["books"]:
+        if b.get("status") == "done":
+            book_cfg = b
+            break
 
     # CLI args: --sample 50,150,250 또는 --full
     sample_pages = None
@@ -374,7 +397,7 @@ if __name__ == "__main__":
         db_path=db_path,
         chroma_dir=chroma_dir,
         book_id=book_cfg["id"],
-        domain=book_cfg.get("domain", "경제"),
+        domain=book_cfg.get("domain", "경제/경영"),
         model=cfg["models"]["ku_extraction"],
         embedding_model=cfg["models"]["embedding"],
         sample_pages=sample_pages,

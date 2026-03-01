@@ -44,6 +44,22 @@ def _load_config(config_path: Path | None = None) -> dict:
         return yaml.safe_load(f)
 
 
+def _load_catalog(cfg: dict) -> list[dict]:
+    """Load books_catalog.yaml → books list."""
+    catalog_path = PROJECT_ROOT / cfg["paths"]["catalog"]
+    with open(catalog_path, encoding="utf-8") as f:
+        catalog = yaml.safe_load(f)
+    return catalog["books"]
+
+
+def _find_book(books: list[dict], book_id: str) -> dict | None:
+    """카탈로그에서 book_id로 책 찾기."""
+    for b in books:
+        if b["id"] == book_id:
+            return b
+    return None
+
+
 def _setup_logging(verbose: bool = False) -> None:
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
@@ -82,11 +98,15 @@ def ingest(
     chroma_dir = PROJECT_ROOT / cfg["paths"]["chroma"]
     vault_dir = PROJECT_ROOT / "vault"
 
-    # Resolve book config
-    book_cfg = cfg["books"][0]
-    bid = book_id or book_cfg["id"]
+    # Resolve book config from catalog
+    catalog_books = _load_catalog(cfg)
+    bid = book_id or catalog_books[0]["id"]
+    book_cfg = _find_book(catalog_books, bid)
+    if not book_cfg:
+        console.print(f"[red]카탈로그에서 책을 찾을 수 없습니다: {bid}[/red]")
+        raise typer.Exit(1)
     title = book_cfg["title"]
-    domain = book_cfg.get("domain", "경제")
+    domain = book_cfg.get("domain", "경제/경영")
 
     if dry_run:
         console.print("[yellow]--- DRY RUN 모드 ---[/yellow]")

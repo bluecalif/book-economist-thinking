@@ -17,6 +17,11 @@ from src.db.models import get_connection, get_ku, list_kus_by_book, list_books
 logger = logging.getLogger(__name__)
 
 
+def _domain_to_dir(domain: str) -> str:
+    """도메인 문자열 → 디렉터리명 (슬래시 → 하이픈)."""
+    return domain.replace("/", "-")
+
+
 def _format_tags_yaml(tags: list[str] | None) -> str:
     """Format tags as YAML inline list."""
     if not tags:
@@ -38,8 +43,8 @@ def render_ku(ku: dict[str, Any], output_dir: Path) -> Path:
     domain = ku.get("domain", "unknown")
     ku_id = ku["id"]
 
-    # Build output path: output_dir/domains/{domain}/{ku_id}.md
-    domain_dir = output_dir / "domains" / domain
+    # Build output path: output_dir/domains/{domain-dir}/{ku_id}.md
+    domain_dir = output_dir / "domains" / _domain_to_dir(domain)
     domain_dir.mkdir(parents=True, exist_ok=True)
     filepath = domain_dir / f"{ku_id}.md"
 

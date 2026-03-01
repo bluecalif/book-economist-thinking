@@ -145,8 +145,17 @@ if __name__ == "__main__":
         cfg = yaml.safe_load(f)
 
     db_path = Path(__file__).resolve().parents[2] / cfg["paths"]["db"]
-    book_cfg = cfg["books"][0]
-    json_path = Path(__file__).resolve().parents[2] / book_cfg["json_path"]
+
+    # 카탈로그에서 첫 번째 done 책 로드
+    catalog_path = Path(__file__).resolve().parents[2] / cfg["paths"]["catalog"]
+    with open(catalog_path, encoding="utf-8") as cf:
+        catalog = yaml.safe_load(cf)
+    book_cfg = catalog["books"][0]  # 기본: 첫 번째 책
+    for b in catalog["books"]:
+        if b.get("status") == "done":
+            book_cfg = b
+            break
+    json_path = Path(__file__).resolve().parents[2] / book_cfg["json_file"]
 
     result = ingest_book(
         db_path=db_path,
@@ -154,7 +163,7 @@ if __name__ == "__main__":
         book_id=book_cfg["id"],
         title=book_cfg["title"],
         domain=book_cfg["domain"],
-        author="이완배",
+        author=book_cfg.get("author", ""),
     )
 
     print(f"\n=== Stage C 완료 ===")

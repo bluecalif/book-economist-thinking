@@ -1,0 +1,702 @@
+domain_short_map:
+  경제/경영: econ
+  역사/사회: hist
+  인문/자기계발: humn
+  과학/기술: sci
+books:
+- id: hist-001
+  title: 1000년
+  author: 발레리 한센
+  domain: 역사/사회
+  year: 2022
+  topic: 초기 세계화
+  json_file: 4e9eb2_1000년_text.json
+  status: pending
+- id: econ-001
+  title: 100년 투자 가문의 비밀
+  author: 존 로스차일드
+  domain: 경제/경영
+  year: 2021
+  topic: 장기 투자
+  json_file: e9403c_100년_투자_가문_text.json
+  status: pending
+- id: hist-002
+  title: 10년후 세계사
+  author: 구정은
+  domain: 역사/사회
+  year: 2015
+  topic: 사회 문제
+  json_file: 859bb8_10년후세계사_text.json
+  status: pending
+- id: econ-002
+  title: 10년후 이곳은 제2의 강남
+  author: 이승훈
+  domain: 경제/경영
+  year: 2019
+  topic: 부동산 투자
+  json_file: 8a7820_10년후이곳은제2의_text.json
+  status: pending
+- id: econ-003
+  title: 10년후 이곳은 제2의 판교
+  author: 이승훈
+  domain: 경제/경영
+  year: 2020
+  topic: 부동산 투자
+  json_file: a1fdb6_10년후이곳은제2의_text.json
+  status: pending
+- id: humn-001
+  title: 12가지 인생의 법칙
+  author: 조던 피터슨
+  domain: 인문/자기계발
+  year: 2018
+  topic: 개인 성장
+  json_file: 552429_12가지인생의법칙_text.json
+  status: pending
+- id: econ-004
+  title: 1등의 통찰
+  author: 히라이 다카시
+  domain: 경제/경영
+  year: 2016
+  topic: 데이터 기반 경영
+  json_file: 8ba9b0_1등의_통찰_text.json
+  status: pending
+- id: econ-005
+  title: 2018 인구절벽이 온다
+  author: 해리 덴트
+  domain: 경제/경영
+  year: 2014
+  topic: 인구 구조 변화
+  json_file: b92be1_2018_인구절벽이_text.json
+  status: pending
+- id: econ-006
+  title: 2019 부의 대절벽
+  author: 해리 덴트
+  domain: 경제/경영
+  year: 2016
+  topic: 경제 주기
+  json_file: 27de69_2019_부의_대절_text.json
+  status: pending
+- id: econ-007
+  title: 2022 시니어 트렌드
+  author: 고려대학교 고령사회연구센터
+  domain: 경제/경영
+  year: 2021
+  topic: 고령화 사회
+  json_file: f6201f_2022_시니어_트_text.json
+  status: pending
+- id: econ-008
+  title: 2030 대담한 도전
+  author: 최윤식
+  domain: 경제/경영
+  year: 2016
+  topic: 기후 변화
+  json_file: a2ddb1_2030_대담한_도_text.json
+  status: pending
+- id: hist-003
+  title: 2030 축의 전환
+  author: 마우로기옌
+  domain: 역사/사회
+  year: 2020
+  topic: 경제적 변화
+  json_file: 46b2f6_2030_축의_전환_text.json
+  status: pending
+- id: hist-004
+  title: 2040 디바이디드
+  author: 조병학
+  domain: 역사/사회
+  year: 2020
+  topic: 미래 사회 변화
+  json_file: 81d51c_2040_디바이디드_text.json
+  status: pending
+- id: hist-005
+  title: 30개 도시로 읽는 세계사
+  author: 조지무쇼
+  domain: 역사/사회
+  year: 2020
+  topic: 도시 역사
+  json_file: fa0eb8_30개도시로읽는세계_text.json
+  status: pending
+- id: sci-001
+  title: 3D프린터의 모든것
+  author: 허제
+  domain: 과학/기술
+  year: 2013
+  topic: 3D 프린팅
+  json_file: 3e9a6e_3D프린터의모든것_text.json
+  status: pending
+- id: sci-002
+  title: 4차산업혁명 전문직의 미래
+  author: 리처드 서스킨드
+  domain: 과학/기술
+  year: 2016
+  topic: 전문직 변화
+  json_file: 44ecb4_4차산업혁명전문직의_text.json
+  status: pending
+- id: hist-006
+  title: 90년생이 온다
+  author: 임홍택
+  domain: 역사/사회
+  year: 2018
+  topic: 세대 차이
+  json_file: f4de8f_90년생이온다_text.json
+  status: pending
+- id: hist-007
+  title: 99를 위한 경제
+  author: 폴 애들러
+  domain: 역사/사회
+  year: 2021
+  topic: 민주사회주의
+  json_file: e3e5af_99를위한경제_text.json
+  status: pending
+- id: sci-003
+  title: AI지도책
+  author: 케이트 크로퍼드
+  domain: 과학/기술
+  year: 2022
+  topic: 인공지능 윤리
+  json_file: 6b8d8e_AI지도책_text.json
+  status: pending
+- id: sci-004
+  title: E=mc2
+  author: 데이비드 보더니스
+  domain: 과학/기술
+  year: 2014
+  topic: 상대성 이론
+  json_file: 4271b8_E=mc2_text.json
+  status: pending
+- id: sci-005
+  title: GPT 제너레이션
+  author: 이시한
+  domain: 과학/기술
+  year: 2023
+  topic: 인공지능
+  json_file: 3a9a91_GPT_제너레이션_text.json
+  status: pending
+- id: econ-009
+  title: GTX시대 돈이 지나가는 길
+  author: 박희용
+  domain: 경제/경영
+  year: 2020
+  topic: 부동산 투자
+  json_file: 59f430_GTX시대_돈이_지_text.json
+  status: pending
+- id: econ-010
+  title: MIT 스타트업 바이블
+  author: 빌올렛
+  domain: 경제/경영
+  year: 2014
+  topic: 창업
+  json_file: 680b95_MIT_스타트업_바_text.json
+  status: pending
+- id: humn-002
+  title: 가끔은 겪하게 외로워야 한다
+  author: 김정운
+  domain: 인문/자기계발
+  year: 2015
+  topic: 외로움과 정체성
+  json_file: bd32df_가끔은_겪하게_외로_text.json
+  status: pending
+- id: hist-008
+  title: 가짜 노동
+  author: 데니스 뇌르마르크
+  domain: 역사/사회
+  year: 2022
+  topic: 현대 노동
+  json_file: 1eaa9f_가짜_노동_text.json
+  status: pending
+- id: econ-011
+  title: 가치있는 아파트 만들기
+  author: 정헌목
+  domain: 경제/경영
+  year: 2017
+  topic: 아파트 공동체
+  json_file: 68c9ca_가치있는_아파트_만_text.json
+  status: pending
+- id: humn-003
+  title: 감정은 습관이다
+  author: 박용철
+  domain: 인문/자기계발
+  year: 2013
+  topic: 감정 습관
+  json_file: dd0217_감정은_습관이다_text.json
+  status: pending
+- id: econ-012
+  title: 강남되는 강북부동산은 정해져 있다
+  author: 엄재웅
+  domain: 경제/경영
+  year: 2022
+  topic: 부동산 투자
+  json_file: 62a646_강남되는_강북부동산_text.json
+  status: pending
+- id: econ-013
+  title: 강남의 탄생
+  author: 강희용/한종수
+  domain: 경제/경영
+  year: 2016
+  topic: 도시 개발
+  json_file: 591cbe_강남의_탄생_text.json
+  status: pending
+- id: humn-004
+  title: 강신주의 감정수업
+  author: 강신주
+  domain: 인문/자기계발
+  year: 2013
+  topic: 감정과 관계
+  json_file: dbd28e_강신주의_감정수업_text.json
+  status: pending
+- id: humn-005
+  title: 개인주의자 선언
+  author: 문유석
+  domain: 인문/자기계발
+  year: 2015
+  topic: 개인주의와 사회적 책임
+  json_file: 77c6e7_개인주의자_선언_text.json
+  status: pending
+- id: hist-009
+  title: 거의 완벽에 가까운 사람들
+  author: 마이클 부스
+  domain: 역사/사회
+  year: 2018
+  topic: 북유럽 사회
+  json_file: c9771a_거의_완벽에_가까운_text.json
+  status: pending
+- id: econ-014
+  title: 경영의 모험
+  author: 존 브룩스
+  domain: 경제/경영
+  year: 2015
+  topic: 기업 경영
+  json_file: a97f87_경영의_모험_text.json
+  status: pending
+- id: econ-thinking-001
+  title: 경제학자의 생각법
+  author: 하노벡
+  domain: 경제/경영
+  year: 2015
+  topic: 경제학 원리
+  json_file: 55bbe4_경제학자의_생각법_text.json
+  status: done
+- id: econ-015
+  title: 경제학자의 시대
+  author: 빈야민 애펠바움
+  domain: 경제/경영
+  year: 2022
+  topic: 경제학의 사회적 영향
+  json_file: 814e70_경제학자의_시대_text.json
+  status: pending
+- id: econ-016
+  title: 골목의 전쟁
+  author: 김영준
+  domain: 경제/경영
+  year: 2017
+  topic: 시장 복잡성
+  json_file: 425998_골목의_전쟁_text.json
+  status: pending
+- id: sci-006
+  title: 공간의 미래
+  author: 유현준
+  domain: 과학/기술
+  year: 2021
+  topic: 코로나19와 기후 변화
+  json_file: 26cee9_공간의_미래_text.json
+  status: pending
+- id: sci-007
+  title: 공간이 만든 공간
+  author: 유현준
+  domain: 과학/기술
+  year: 2020
+  topic: 건축과 문화
+  json_file: de42b5_공간이_만든_공간_text.json
+  status: pending
+- id: sci-008
+  title: 공간혁명
+  author: 세라 골드헤이건
+  domain: 과학/기술
+  year: 2019
+  topic: 도시 설계
+  json_file: b479ec_공간혁명_text.json
+  status: pending
+- id: humn-006
+  title: 공정하다는 착각
+  author: 마이클 샌델
+  domain: 인문/자기계발
+  year: 2020
+  topic: 능력주의 비판
+  json_file: 6d8fdf_공정하다는_착각_text.json
+  status: pending
+- id: sci-009
+  title: 과학이 필요한 시간
+  author: 궤도
+  domain: 과학/기술
+  year: 2022
+  topic: 과학기술과 인류
+  json_file: bf89ae_과학이_필요한_시간_text.json
+  status: pending
+- id: hist-010
+  title: 국가란 무엇인가
+  author: 유시민
+  domain: 역사/사회
+  year: 2017
+  topic: 시민권과 국가
+  json_file: e01fd7_국가란_무엇인가_text.json
+  status: pending
+- id: hist-011
+  title: 국화와 칼
+  author: 루스 베네틱트
+  domain: 역사/사회
+  year: 1946
+  topic: 일본 문화
+  json_file: a8247a_국화와_칼_text.json
+  status: pending
+- id: econ-017
+  title: 그들은 왜 나보다 덜 내는가
+  author: 이매뉴얼 사에즈게이브리얼 저크먼
+  domain: 경제/경영
+  year: 2021
+  topic: 조세 불공정성
+  json_file: da07fe_그들은_왜_나보다__text.json
+  status: pending
+- id: sci-010
+  title: 그리드
+  author: 그레천바크
+  domain: 과학/기술
+  year: 2021
+  topic: 지속 가능한 에너지
+  json_file: 723b42_그리드_text.json
+  status: pending
+- id: econ-018
+  title: 그리드를 파괴하라
+  author: 이동우
+  domain: 경제/경영
+  year: 2016
+  topic: 조직 혁신
+  json_file: 83eb18_그리드를_파괴하라_text.json
+  status: pending
+- id: econ-019
+  title: 글로벌 고령화 위기인가 기회인가
+  author: 폴 어빙
+  domain: 경제/경영
+  year: 2016
+  topic: 고령화 사회
+  json_file: f28f66_글로벌_고령화_위기_text.json
+  status: pending
+- id: hist-012
+  title: 기대의 발견
+  author: 데이비드 롭슨
+  domain: 역사/사회
+  year: 2023
+  topic: 기대와 인식
+  json_file: 44d285_기대의_발견_text.json
+  status: pending
+- id: humn-007
+  title: 기분이 태도가 되지 않게
+  author: 레몬심리
+  domain: 인문/자기계발
+  year: 2020
+  topic: 감정 관리
+  json_file: a668ac_기분이_태도가_되지_text.json
+  status: pending
+- id: econ-020
+  title: 기브앤테이크
+  author: 애덤 그랜트
+  domain: 경제/경영
+  year: 2013
+  topic: 이타주의
+  json_file: 027e84_기브앤테이크_text.json
+  status: pending
+- id: sci-011
+  title: 기하학 세상을 설명하다
+  author: 조던엘렌버그
+  domain: 과학/기술
+  year: 2022
+  topic: 수학과 사회
+  json_file: bf8fb9_기하학_세상을_설명_text.json
+  status: pending
+- id: econ-021
+  title: 기획의 정석
+  author: 박신영
+  domain: 경제/경영
+  year: 2013
+  topic: 기획 방법론
+  json_file: 0aec47_기획의_정석_text.json
+  status: pending
+- id: sci-012
+  title: 기후미식
+  author: 이의철
+  domain: 과학/기술
+  year: 2022
+  topic: 지속 가능한 식습관
+  json_file: dcd4eb_기후미식_text.json
+  status: pending
+- id: sci-013
+  title: 김대식 빅퀘스천
+  author: 김대식
+  domain: 과학/기술
+  year: 2014
+  topic: 삶의 의미
+  json_file: 97bc63_김대식_빅퀘스천_text.json
+  status: pending
+- id: humn-008
+  title: 나는 4시간만 일한다
+  author: 팀 페리스
+  domain: 인문/자기계발
+  year: 2007
+  topic: 시간 관리
+  json_file: 70a306_나는_4시간만_일한_text.json
+  status: pending
+- id: humn-009
+  title: 나는 단순하게 살기로 했다
+  author: 사사키 후미오
+  domain: 인문/자기계발
+  year: 2015
+  topic: 미니멀리즘
+  json_file: 025c5a_나는_단순하게_살기_text.json
+  status: pending
+- id: humn-010
+  title: 나는 왜 이일을 하는가
+  author: 사이먼 사이넥
+  domain: 인문/자기계발
+  year: 2013
+  topic: 리더십
+  json_file: 8d1a81_나는_왜_이일을_하_text.json
+  status: pending
+- id: humn-011
+  title: 나를 지키며 일하는 법
+  author: 강상중
+  domain: 인문/자기계발
+  year: 2017
+  topic: 일과 자아실현
+  json_file: 113d2d_나를_지키며_일하는_text.json
+  status: pending
+- id: humn-012
+  title: 내 마음도 모른채 어른이 되었다
+  author: 로베르토 리마 네토
+  domain: 인문/자기계발
+  year: 2023
+  topic: 자아 발견
+  json_file: cfba62_내_마음도_모른채__text.json
+  status: pending
+- id: sci-014
+  title: 내가 된다는 것
+  author: 아닐 세스
+  domain: 과학/기술
+  year: 2022
+  topic: 의식과 자아
+  json_file: 5f54bf_내가_된다는_것_text.json
+  status: pending
+- id: humn-013
+  title: 내가 혼자 여행하는 이유
+  author: 카트린지타
+  domain: 인문/자기계발
+  year: 2015
+  topic: 자기 발견
+  json_file: 0679d1_내가_혼자_여행하는_text.json
+  status: pending
+- id: econ-022
+  title: 내러티브 경제학
+  author: 로버트 쉴러
+  domain: 경제/경영
+  year: 2021
+  topic: 내러티브 경제학
+  json_file: 21473a_내러티브_경제학_text.json
+  status: pending
+- id: humn-014
+  title: 내안에서 나를 만드는 것들
+  author: 러스 로버츠
+  domain: 인문/자기계발
+  year: 2015
+  topic: 행복과 도덕성
+  json_file: cd08c4_내안에서_나를_만드_text.json
+  status: pending
+- id: econ-023
+  title: 내일의 경제
+  author: 마크 뷰캐넌
+  domain: 경제/경영
+  year: 2014
+  topic: 금융 위기
+  json_file: 814ca2_내일의_경제_text.json
+  status: pending
+- id: hist-013
+  title: 냉정한 이타주의자
+  author: 윌리엄 맥어스킬
+  domain: 역사/사회
+  year: 2017
+  topic: 효율적 이타주의
+  json_file: 65b7e3_냉정한_이타주의자_text.json
+  status: pending
+- id: econ-024
+  title: 넘버스스틱
+  author: 칩 히스, 댄 히스
+  domain: 경제/경영
+  year: 2022
+  topic: 숫자 소통
+  json_file: 5fe2c0_넘버스스틱_text.json
+  status: pending
+- id: econ-025
+  title: 넷플릭스 스타트업의 전설
+  author: 지나 키팅
+  domain: 경제/경영
+  year: 2015
+  topic: 스타트업 성장
+  json_file: beaab9_넷플릭스_스타트업의_text.json
+  status: pending
+- id: hist-014
+  title: 노동의 시대는 끝났다
+  author: 대니얼 서스킨드
+  domain: 역사/사회
+  year: 2020
+  topic: 기술 발전
+  json_file: 3b9c9b_노동의_시대는_끝났_text.json
+  status: pending
+- id: hist-015
+  title: 노동자없는 노동
+  author: 필존스
+  domain: 역사/사회
+  year: 2022
+  topic: 미세노동
+  json_file: d3fdc2_노동자없는_노동_text.json
+  status: pending
+- id: hist-016
+  title: 노이즈
+  author: 대니얼 카너먼
+  domain: 역사/사회
+  year: 2022
+  topic: 판단 오류
+  json_file: 42b92a_노이즈_text.json
+  status: pending
+- id: sci-015
+  title: 노화의 종말
+  author: 데이비스 싱클레어
+  domain: 과학/기술
+  year: 2020
+  topic: 노화 방지
+  json_file: bf86af_노화의_종말_text.json
+  status: pending
+- id: sci-016
+  title: 뇌 욕망의 비밀을 풀다
+  author: 한스게오르크호이젤
+  domain: 과학/기술
+  year: 2019
+  topic: 신경마케팅
+  json_file: 1f05d8_뇌_욕망의_비밀을__text.json
+  status: pending
+- id: sci-017
+  title: 뇌과학자들
+  author: 샘킨
+  domain: 과학/기술
+  year: 2016
+  topic: 신경과학
+  json_file: c6d6fb_뇌과학자들_text.json
+  status: pending
+- id: sci-018
+  title: 뇌를 바꾼 공학
+  author: 임창환
+  domain: 과학/기술
+  year: 2015
+  topic: 뇌과학
+  json_file: a2ffd7_뇌를_바꾼_공학_text.json
+  status: pending
+- id: sci-019
+  title: 뉴노멀
+  author: 피터 힌센
+  domain: 과학/기술
+  year: 2014
+  topic: 디지털 혁명
+  json_file: ea9af3_뉴노멀_text.json
+  status: pending
+- id: sci-020
+  title: 뉴맵
+  author: 대니얼 예긴
+  domain: 과학/기술
+  year: 2021
+  topic: 에너지와 지정학
+  json_file: 532ffd_뉴맵_text.json
+  status: pending
+- id: hist-017
+  title: 뉴스의 시대
+  author: 알랭 드 보통
+  domain: 역사/사회
+  year: 2014
+  topic: 뉴스 소비
+  json_file: bef215_뉴스의_시대_text.json
+  status: pending
+- id: humn-015
+  title: 다시 어떻게 읽을 것인가
+  author: 나오미 배런
+  domain: 인문/자기계발
+  year: 2023
+  topic: 디지털 독서
+  json_file: 03b26b_다시_어떻게_읽을__text.json
+  status: pending
+- id: sci-021
+  title: 다크 데이터
+  author: 데이비드 핸드
+  domain: 과학/기술
+  year: 2021
+  topic: 다크 데이터
+  json_file: 6e2090_다크_데이터_text.json
+  status: pending
+- id: sci-022
+  title: 당신도 느리게 나이들수 있습니다
+  author: 정희원
+  domain: 과학/기술
+  year: 2023
+  topic: 건강한 노화
+  json_file: cd0c3b_당신도_느리게_나이_text.json
+  status: pending
+- id: econ-026
+  title: 당신은 사업가입니까
+  author: 캐럴 로스
+  domain: 경제/경영
+  year: 2014
+  topic: 사업 성공
+  json_file: 7d6558_당신은_사업가입니까_text.json
+  status: pending
+- id: humn-016
+  title: 당신을 보는 세상의 관점
+  author: 샐리 호그셰드
+  domain: 인문/자기계발
+  year: 2015
+  topic: 개인 매력
+  json_file: 1f0fa1_당신을_보는_세상의_text.json
+  status: pending
+- id: humn-017
+  title: 당신의 모든 것이 메시지다
+  author: 송길영
+  domain: 인문/자기계발
+  year: 2021
+  topic: 사회적 변화
+  json_file: efbadd_당신의_모든_것이__text.json
+  status: pending
+- id: humn-018
+  title: 당신이 옳다
+  author: 정혜신
+  domain: 인문/자기계발
+  year: 2018
+  topic: 심리적 치유
+  json_file: 13b382_당신이_옳다_text.json
+  status: pending
+- id: sci-023
+  title: 대량살상 수학무기
+  author: 캐시 오닐
+  domain: 과학/기술
+  year: 2017
+  topic: 알고리즘 불공정성
+  json_file: b718cc_대량살상_수학무기_text.json
+  status: pending
+- id: econ-027
+  title: 대서울의 길
+  author: 김시덕
+  domain: 경제/경영
+  year: 2021
+  topic: 지역 발전
+  json_file: 23834c_대서울의_길_text.json
+  status: pending
+- id: hist-018
+  title: 대전환
+  author: 바츨라프 스밀
+  domain: 역사/사회
+  year: 2022
+  topic: 인구 변화
+  json_file: e82ff1_대전환_text.json
+  status: pending

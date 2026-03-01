@@ -1,0 +1,194 @@
+# Phase 3: 87권 확장 + 그래프 레이어 — Context
+> Last Updated: 2026-03-01
+
+## 1. 핵심 파일
+
+### 수정 대상
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `src/ingest/ku_extractor.py` | `DOMAIN_SHORT_MAP` 상수 추가, line 154 `domain_short` 파라미터화 |
+| `src/vault/renderer.py` | `_domain_to_dir()` 헬퍼 추가, line 42 도메인 경로 수정 |
+| `config.yaml` | `books` 섹션 제거 → `catalog`, `batch` 섹션 추가 |
+
+### 신규 생성
+
+| 파일 | 용도 |
+|------|------|
+| `books_catalog.yaml` | 87권 메타데이터 카탈로그 |
+| `scripts/build_catalog.py` | CSV + JSON → 카탈로그 생성 |
+| `scripts/migrate_data.py` | text.json 복사 스크립트 |
+| `scripts/batch_ingest.py` | 87권 배치 처리 + 진행 추적 |
+| `src/graph/edge_builder.py` | edge 자동 생성 (Stage I) |
+| `src/graph/traversal.py` | 그래프 탐색 (Stage I) |
+| `src/generation/idea.py` | 아이디어 생성 (Stage J) |
+| `src/search/hybrid.py` | Vector + Graph 복합 검색 (Stage J) |
+
+### 참조 (읽기 전용)
+
+| 파일 | 용도 |
+|------|------|
+| `src/ingest/pdf_parser.py` | `ingest_book()` 함수 — 배치에서 재사용 |
+| `src/db/models.py` | CRUD 헬퍼 — INSERT OR IGNORE 멱등성 |
+| `src/db/vectors.py` | ChromaDB 래퍼 — 배치 임베딩 |
+| `src/search/vector.py` | 벡터 검색 — hybrid search 기반 |
+| `src/generation/content.py` | 콘텐츠 생성 — idea.py 참고 모델 |
+
+### 외부 참조 (1회성)
+
+| 파일 | 용도 |
+|------|------|
+| `C:\Projects-2026\maintenance\books-final-processor\docs\100권 노션 원본_수정.csv` | 87권 메타데이터 소스 |
+| `C:\Projects-2026\maintenance\books-final-processor\data\output\text\*.json` | 87권 text.json 소스 |
+
+---
+
+## 2. 데이터 스키마
+
+### 도메인 매핑 (4개 카테고리)
+
+```python
+DOMAIN_SHORT_MAP = {
+    "역사/사회": "hist",
+    "경제/경영": "econ",
+    "인문/자기계발": "humn",
+    "과학/기술": "sci",
+    "경제": "econ",   # 레거시 호환
+}
+```
+
+### Book ID 패턴
+
+| 도메인 | book_id 범위 | 권수 |
+|--------|-------------|-----|
+| 경제/경영 | `econ-thinking-001` (기존) + `econ-002`~`econ-028` | 28 |
+| 역사/사회 | `hist-001`~`hist-018` | 18 |
+| 인문/자기계발 | `humn-001`~`humn-018` | 18 |
+| 과학/기술 | `sci-001`~`sci-023` | 23 |
+
+### KU ID 패턴
+
+```
+ku-{domain_short}-{book_seq}-{ku_seq:04d}
+예: ku-hist-003-0042
+```
+
+- `book_seq`: book_id의 마지막 segment (`hist-003` → `003`)
+- `domain_short`: `DOMAIN_SHORT_MAP[domain]` 조회
+
+### text.json 스키마 (입력)
+
+```json
+{
+  "book_id": 199,
+  "book_title": "경제학자의 생각법",
+  "metadata": {
+    "total_pages": 400,
+    "main_start_page": 17,
+    "main_end_page": 370,
+    "chapter_count": 5
+  },
+  "text_content": {
+    "chapters": [
+      {
+        "order_index": 0,
+        "chapter_number": 1,
+        "title": "챕터명",
+        "start_page": 17,
+        "end_page": 90,
+        "pages": [
+          {"page_number": 17, "text": "..."}
+        ]
+      }
+    ]
+  }
+}
+```
+
+### books_catalog.yaml 스키마 (카탈로그)
+
+```yaml
+domain_short_map:
+  역사/사회: hist
+  경제/경영: econ
+  인문/자기계발: humn
+  과학/기술: sci
+
+books:
+  - id: econ-thinking-001
+    title: "경제학자의 생각법"
+    domain: "경제/경영"
+    domain_short: econ
+    author: "이완배"
+    year: 2021
+    json_path: "data/raw/경제-경영/55bbe4_경제학자의_생각법_text.json"
+    status: done          # done|pending|in_progress|failed
+```
+
+### 데이터 디렉터리 구조 (목표)
+
+```
+data/
+├── knowledge.db          (87권 데이터)
+├── chroma/               (75,000+ embeddings)
+└── raw/
+    ├── 역사-사회/         (18권 text.json)
+    ├── 경제-경영/         (28권 text.json)
+    ├── 인문-자기계발/     (18권 text.json)
+    └── 과학-기술/         (23권 text.json)
+
+vault/domains/
+├── 역사-사회/
+├── 경제-경영/
+├── 인문-자기계발/
+└── 과학-기술/
+```
+
+### 배치 진행 추적 (`logs/batch_progress.json`)
+
+```json
+{
+  "total": 87, "done": 45, "failed": 1,
+  "books": {
+    "econ-002": {"status": "done", "spans": 287, "kus": 831, "completed_at": "..."},
+    "hist-003": {"status": "failed", "error": "...", "failed_at": "..."}
+  }
+}
+```
+
+---
+
+## 3. 주요 결정사항
+
+| # | 결정 | 근거 |
+|---|------|------|
+| 1 | 4개 카테고리 그대로 사용 (7개 도메인 세분화 안 함) | books-final-processor CSV의 분야 컬럼을 그대로 활용. 세분화는 추후 필요시 |
+| 2 | text.json을 프로젝트 내부로 복사 (standalone) | 프로젝트가 모든 지식 소스를 자체 포함해야 함 |
+| 3 | domain_short 매핑: hist/econ/humn/sci | KU ID에 사용되는 4자리 약어. 기존 econ 호환 유지 |
+| 4 | 기존 domain "경제" → "경제/경영" 통일 | 4개 카테고리 체계로 일관성 확보 |
+| 5 | 도메인 디렉터리: 슬래시→하이픈 치환 | OS 경로 안전성 (`역사/사회` → `역사-사회`) |
+| 6 | GPT-4.1-mini 유지 | Phase 1-2와 동일 모델, 비용 효율 |
+
+---
+
+## 4. 컨벤션 체크리스트
+
+### 아키텍처 (masterplan §3)
+- [x] L0 Raw → L1 KU → L2 Graph → L3 Generation 순서 준수
+- [x] CLI 명령어 체계 유지 (ks ingest, search, explore, generate)
+- [ ] Stage I에서 `ks explore` 명령 추가 예정
+
+### 지식 구조 (masterplan §5)
+- [x] KU 포맷: claim + evidence_summary + counter_summary
+- [x] KU ID 패턴: `ku-{domain_short}-{book_seq}-{ku_seq}`
+- [x] Maturity: M0 (자동추출)
+
+### 데이터 (masterplan §4-7)
+- [x] 5개 테이블 스키마 변경 없음
+- [x] ChromaDB ku_embeddings 컬렉션 재사용
+- [ ] Stage I에서 edges 테이블 활성화 예정
+
+### 인코딩
+- [x] CSV 읽기: `utf-8-sig`
+- [x] 파일 쓰기: `utf-8` explicit
+- [x] `PYTHONUTF8=1` 환경변수

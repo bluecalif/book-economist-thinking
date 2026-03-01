@@ -1,6 +1,6 @@
 # Project Plan
-> Last Updated: 2026-02-28
-> Phase Dev-Docs: `docs/phases/phase-1/` (A~D), `docs/phases/phase-2/` (E~G)
+> Last Updated: 2026-03-01
+> Phase Dev-Docs: `docs/phases/phase-1/` (A~D), `docs/phases/phase-2/` (E~G), `docs/phases/phase-3/` (H~J)
 
 ## Roadmap Overview
 
@@ -8,8 +8,8 @@ Knowledge System — 87권 도서를 구조화된 지식 파이프라인으로 �
 전략: 1권 데이터 파이프라인 → 서비스 레이어 → 5권 확장 → 87권 완성 → 웹 UI (선택).
 
 ```
-Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ──→ Phase 3 (그래프+5권) ──→ Phase 4 (87권+진화) ──→ Phase 5 (웹 UI)
-  L0+L1 기본                     L1검색+L3생성+CLI           L2+L3 확장              전체 규모+L4              FastAPI+프론트
+Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ──→ Phase 3 (87권+그래프) ──→ Phase 4 (진화) ──→ Phase 5 (웹 UI)
+  L0+L1 기본                     L1검색+L3생성+CLI           87권확장+L2+L3확장       L4 Evolution        FastAPI+프론트
 ```
 
 ---
@@ -44,7 +44,7 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ---
 
-## Phase 2: 서비스 레이어 (Stage E~G) — In Progress
+## Phase 2: 서비스 레이어 (Stage E~G) — Complete ✅
 
 **목표:** 데이터 파이프라인 위에 검색/생성/CLI를 올려 사용 가능한 시스템 완성
 **예상 기간:** Week 2-3
@@ -74,43 +74,54 @@ Phase 1 (데이터 파이프라인) ──→ Phase 2 (서비스 레이어) ─�
 
 ---
 
-## Phase 3: 그래프 + 아이디어 + 5권 확장 — Planned
+## Phase 3: 87권 확장 + 그래프 레이어 (Stage H~J) — In Progress
 
-**목표:** Cross-domain 연결의 가치 검증
-**예상 기간:** Week 4-5
-**레이어:** L2 Graph, L3 Generation (확장)
+**목표:** 87권 배치 처리 + L2 Graph + L3 아이디어 생성 + Hybrid Search
+**예상 기간:** 2-4주
+**레이어:** L0+L1 확장 (87권), L2 Graph, L3 Generation (확장)
 **전제:** Phase 2 완료
+**dev-docs:** `docs/phases/phase-3/`
+
+### Stages
+
+| Stage | 이름 | 범위 | 크기 |
+|-------|------|------|------|
+| H | 87권 마이그레이션 + 배치 | text.json 복사, 카탈로그, 코드 수정, 배치 처리 | L |
+| I | Graph Layer | edge 자동 생성, 그래프 탐색, dispute axis | M |
+| J | Generation 확장 + Hybrid | 아이디어 생성, Vector+Graph 복합 검색 | M |
 
 ### 산출물
+- 87권 text.json → `data/raw/` (standalone)
+- `books_catalog.yaml` — 87권 메타데이터
+- `scripts/batch_ingest.py` — 배치 처리
+- 10,000-15,000 KU + 75,000+ ChromaDB embeddings
 - `src/graph/edge_builder.py`, `src/graph/traversal.py`
-- `src/generation/idea.py`
-- CLI 확장 (explore, generate idea)
-- 500-1,000 KU + cross-domain edges
+- `src/generation/idea.py`, `src/search/hybrid.py`
+- 4개 도메인 Vault 구조
 
 ### 완료 기준
+- `ks stats` → books=87, spans≥25,000, kus≥75,000
 - `ks explore ku-id --depth 2` → 연결된 KU 탐색
-- `ks generate idea --mode business --domains 경제,기술` → 아이디어 후보 생성
-- Cross-domain 연결에서 실제 유용한 통찰 산출
+- `ks generate idea --mode business --domains 경제/경영,과학/기술` → 아이디어 생성
+- 4개 도메인 간 dispute 축 자동 식별
 
 ---
 
-## Phase 4: 87권 완료 + 진화 — Planned
+## Phase 4: 진화 (Evolution) — Planned
 
-**목표:** 전체 규모 달성 + 외부 지식 유입
+**목표:** 외부 지식 유입 + 마크다운 동기화
 **예상 기간:** Month 2-3
-**레이어:** L4 Evolution, 전체 레이어 안정화
+**레이어:** L4 Evolution
 **전제:** Phase 3 완료
 
 ### 산출물
-- `src/evolution/crawler.py`, `src/evolution/sync.py`
-- `src/search/hybrid.py`
-- 10,000-15,000 KU, 수천 edges
-- Dispute 자동 요약
+- `src/evolution/crawler.py` — 웹 크롤링 기반 KU 확장
+- `src/evolution/sync.py` — 마크다운 ↔ DB 동기화
+- Maturity 자동 승격 (M0→M1→M2)
 
 ### 완료 기준
-- 87권 전체 처리 완료
 - `ks crawl --ku ku-id` → 웹 보강 정보 수집 + KU 업데이트 제안
-- 7개 도메인 간 dispute 축 자동 식별
+- `ks sync` → Vault 편집 → DB 반영
 
 ---
 
@@ -134,16 +145,16 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ──→ Phase 5
 ```
 
 - Phase 2는 Phase 1의 L0+L1 데이터 파이프라인에 의존
-- Phase 3는 Phase 2의 L1검색+L3생성 서비스 레이어에 의존
-- Phase 4는 Phase 3의 L2 Graph에 의존
+- Phase 3는 Phase 2의 검색+생성+CLI 서비스 레이어에 의존
+- Phase 4는 Phase 3의 87권 KU + L2 Graph에 의존
 - Phase 5는 Phase 1-4 전체 완료 + 가치 검증 통과 시에만 실행
 
 ## Timeline
 
 | Phase | 시작 | 종료 | 비용 추정 |
 |-------|------|------|----------|
-| Phase 1 | 2026-02 | 2026-03 초 | $1-3 |
-| Phase 2 | Phase 1 완료 후 | +1주 | $3-10 |
-| Phase 3 | Phase 2 완료 후 | +2주 | $10-30 |
-| Phase 4 | Phase 3 완료 후 | +4-6주 | $150-350 |
+| Phase 1 | 2026-02 | 2026-02-28 ✅ | $1-3 |
+| Phase 2 | 2026-02-28 | 2026-03-01 ✅ | $3-10 |
+| Phase 3 | 2026-03-01 | +2-4주 | $150-300 |
+| Phase 4 | Phase 3 완료 후 | +2-4주 | $20-50 |
 | Phase 5 | 조건부 | TBD | TBD |

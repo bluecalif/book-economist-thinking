@@ -28,7 +28,7 @@ Phase 2 서비스 레이어 구현 (Stage E~G)
 
 ### 커밋 히스토리
 ```
-(pending) phase-2 Stage G: CLI + Vault 렌더러 + 통합 테스트
+acc1942 phase-2 Stage G: CLI + Vault 렌더러 + 통합 테스트
 1f0544e phase-2 Stage F: 콘텐츠 생성 파이프라인 (F.1~F.4)
 dcb8043 phase-2 Stage E: 벡터 검색 모듈 + Phase 1 완료 문서 동기화
 4d33a2a phase-1 Stage D: KU 추출 997건 + ChromaDB 임베딩 완료
@@ -50,7 +50,8 @@ dcb8043 phase-2 Stage E: 벡터 검색 모듈 + Phase 1 완료 문서 동기화
 - `docs/phases/phase-2/tasks.md` — G.1~G.4 체크 완료 (11/11, 100%)
 
 ## Remaining / TODO
-- Phase 2 완료. Phase 3 (그래프 레이어) 시작 가능.
+- Phase 3 (87권 확장 + 그래프 레이어) 시작. Stage H 착수 대기.
+- Phase 3 dev-docs 생성 완료: `docs/phases/phase-3/`
 
 ## Key Decisions
 - **모델 통일**: gpt-4.1-mini (KU 추출 + 콘텐츠 생성 모두)
@@ -96,4 +97,4 @@ vault/domains/경제/   — 997 KU markdown files
 ```
 
 ## Next Action
-Phase 3 착수 또는 사용자 피드백 대기.
+Phase 3 Stage H.1 (북 카탈로그 생성) 착수.

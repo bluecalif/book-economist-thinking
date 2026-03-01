@@ -1,5 +1,5 @@
 # Project Context
-> Last Updated: 2026-02-28
+> Last Updated: 2026-03-01
 
 ## Tech Stack
 
@@ -121,7 +121,22 @@ pyproject.toml
 - OpenAI API — 임베딩, KU 추출 (GPT-4o mini)
 - Anthropic API — 생성 (Claude)
 
+### Python 패키지 (Phase 3: 87권 확장, 추가분)
+- 없음 (기존 패키지로 충분)
+
 ### 기존 자산
-- `55bbe4_경제학자의_생각법_structure.json` — 5챕터 구조
-- `55bbe4_경제학자의_생각법_text.json` — 400페이지 텍스트
-- 기존 JSON 우선 활용, PDF 직접 파싱은 보조 경로
+- `55bbe4_경제학자의_생각법_text.json` — Phase 1에서 사용한 원본
+- `data/raw/` — Phase 3에서 87권 text.json 마이그레이션 대상 디렉터리
+- `books_catalog.yaml` — Phase 3에서 생성할 87권 메타데이터 카탈로그
+
+### 외부 자산 (Phase 3)
+- `C:\Projects-2026\maintenance\books-final-processor\data\output\text\` — 87권 text.json (1회 복사)
+- `C:\Projects-2026\maintenance\books-final-processor\docs\100권 노션 원본_수정.csv` — 도서 메타데이터 (1회 참조)
+
+### 도메인 체계 (Phase 3~)
+| 카테고리 | domain_short | 권수 |
+|---------|-------------|-----|
+| 역사/사회 | hist | 18 |
+| 경제/경영 | econ | 28 |
+| 인문/자기계발 | humn | 18 |
+| 과학/기술 | sci | 23 |

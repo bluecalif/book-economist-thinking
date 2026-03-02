@@ -223,6 +223,84 @@ def generate_content(
     console.print(f"\n[dim]생성 ID: {result.generation_id} | KU {len(result.ku_ids)}건 참조[/dim]")
 
 
+# --- explore ---
+
+@app.command()
+def explore(
+    ku_id: str = typer.Argument(..., help="시작 KU ID (e.g., ku-econ-001-0001)"),
+    depth: int = typer.Option(2, "--depth", "-d", help="탐색 깊이 (hop 수)"),
+    config: Optional[Path] = config_option,
+    verbose: bool = verbose_option,
+) -> None:
+    """그래프 탐색 — KU에서 연결된 KU를 BFS로 탐색합니다."""
+    _setup_logging(verbose)
+    cfg = _load_config(config)
+
+    db_path = PROJECT_ROOT / cfg["paths"]["db"]
+
+    if not db_path.exists():
+        console.print(f"[red]DB 파일 없음: {db_path}[/red]")
+        raise typer.Exit(1)
+
+    from src.db.models import get_connection
+    from src.graph.traversal import traverse
+
+    conn = get_connection(db_path)
+
+    # seed KU 확인
+    seed = conn.execute(
+        "SELECT id, claim, domain FROM knowledge_units WHERE id = ?", (ku_id,)
+    ).fetchone()
+    if not seed:
+        console.print(f"[red]KU를 찾을 수 없습니다: {ku_id}[/red]")
+        conn.close()
+        raise typer.Exit(1)
+
+    seed = dict(seed)
+    console.print(f"\n[bold cyan]Seed:[/bold cyan] {seed['id']}")
+    console.print(f"  Domain: {seed['domain']}")
+    console.print(f"  Claim: {seed['claim'][:80]}…\n")
+
+    results = traverse(conn, ku_id, depth=depth)
+
+    if not results:
+        console.print("[yellow]연결된 KU가 없습니다.[/yellow]")
+        conn.close()
+        return
+
+    table = Table(title=f"Graph Explore: {ku_id} (depth={depth})")
+    table.add_column("Hop", justify="center", style="bold")
+    table.add_column("KU ID", style="cyan")
+    table.add_column("Relation", style="green")
+    table.add_column("Strength", justify="right", style="yellow")
+    table.add_column("Domain", style="magenta")
+    table.add_column("Claim", max_width=50)
+    table.add_column("Score", justify="right", style="dim")
+
+    for r in results:
+        # 마지막 edge의 relation/strength
+        last_edge = r["path"][-1] if r["path"] else {}
+        relation = last_edge.get("relation_type", "-")
+        strength = f"{last_edge.get('strength', 0):.2f}" if last_edge else "-"
+
+        claim = r["ku_data"].get("claim", "")
+        claim_short = claim[:50] + "…" if len(claim) > 50 else claim
+
+        table.add_row(
+            str(r["hop"]),
+            r["ku_id"],
+            relation,
+            strength,
+            r["ku_data"].get("domain", ""),
+            claim_short,
+            f"{r['path_score']:.3f}",
+        )
+
+    console.print(table)
+    console.print(f"\n[dim]총 {len(results)}건 탐색됨[/dim]")
+    conn.close()
+
+
 # --- stats ---
 
 @app.command()

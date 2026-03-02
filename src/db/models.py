@@ -300,6 +300,44 @@ def insert_generation(
     conn.commit()
 
 
+# --- edges ---
+
+def insert_edge(
+    conn: sqlite3.Connection,
+    *,
+    id: str,
+    from_ku_id: str,
+    to_ku_id: str,
+    relation_type: str,
+    strength: float = 0.5,
+    source: str = "auto",
+    description: str | None = None,
+) -> None:
+    conn.execute(
+        "INSERT OR IGNORE INTO edges "
+        "(id, from_ku_id, to_ku_id, relation_type, strength, source, description) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (id, from_ku_id, to_ku_id, relation_type, strength, source, description),
+    )
+    conn.commit()
+
+
+def list_edges_by_ku(conn: sqlite3.Connection, ku_id: str) -> list[dict[str, Any]]:
+    """from 또는 to가 ku_id인 모든 edges 반환."""
+    rows = conn.execute(
+        "SELECT * FROM edges WHERE from_ku_id = ? OR to_ku_id = ? ORDER BY strength DESC",
+        (ku_id, ku_id),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def count_edges(conn: sqlite3.Connection) -> int:
+    row = conn.execute("SELECT COUNT(*) as cnt FROM edges").fetchone()
+    return row["cnt"]
+
+
+# --- generations ---
+
 def get_generation(conn: sqlite3.Connection, gen_id: str) -> dict[str, Any] | None:
     row = conn.execute("SELECT * FROM generations WHERE id = ?", (gen_id,)).fetchone()
     if not row:

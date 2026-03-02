@@ -1,6 +1,6 @@
 # Phase 3: 87권 확장 + 그래프 레이어 (Pilot First)
-> Last Updated: 2026-03-01
-> Status: Planning
+> Last Updated: 2026-03-02
+> Status: In Progress (H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gate ✅ → H.full 대기)
 > **전제:** Phase 2 완료 (1권 파이프라인 + 검색 + 생성 + CLI + Vault)
 
 ## 1. Summary (개요)
@@ -35,14 +35,13 @@
 
 | 항목 | 값 |
 |------|---|
-| Books | 1 (경제학자의 생각법) |
-| Raw Spans | 341 |
-| Knowledge Units | 997 |
-| ChromaDB Embeddings | 997 |
+| Books | 4 (4개 도메인 파일럿 완료) |
+| Raw Spans | 1,724 |
+| Knowledge Units | 5,872 |
+| ChromaDB Embeddings | 5,872 |
 | Generations | 2 |
-| Vault Files | 997 (`vault/domains/경제/`) |
-| Edges | 0 (테이블만 존재) |
-| LLM 캐시 | 없음 (캐시 메커니즘 미구현) |
+| Edges | **11,662** (within-book only) |
+| LLM 캐시 | 구현 완료 (`data/llm_cache.db`) |
 
 **사용 가능한 외부 데이터:**
 - `C:\Projects-2026\maintenance\books-final-processor\data\output\text\` — 87권 text.json

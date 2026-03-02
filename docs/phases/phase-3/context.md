@@ -1,5 +1,5 @@
 # Phase 3: 87권 확장 + 그래프 레이어 — Context
-> Last Updated: 2026-03-01
+> Last Updated: 2026-03-02
 
 ## 1. 핵심 파일
 
@@ -195,6 +195,9 @@ vault/domains/
 | 7 | **Pilot First 전략** | 비경제 도메인 KU 품질 미검증, 비용 리스크 1/3 감소 |
 | 8 | **LLM 응답 캐시 도입** | 재실행 비용 $0, 프롬프트 튜닝 안전성 확보 |
 | 9 | **KU + Graph 함께 파일럿 검증** | end-to-end 품질 확인, 별도 검증 대비 판단 포인트 축소 |
+| 10 | **SQLite 멀티쓰레드 해법: KU pre-load** | conn 객체 쓰레드 공유 불가 → 메인 쓰레드에서 KU dict 로드 후 전달 |
+| 11 | **Cross-domain edge 전략 재검토 필요** | threshold=0.35에서 후보 35건, LLM 전부 거부 → 전용 전략 필요 |
+| 12 | **Strength 실질 이진 판단** | LLM이 관계 인정 시 99.1%가 0.7+ → threshold 의미 제한적 |
 
 ---
 
@@ -203,7 +206,7 @@ vault/domains/
 ### 아키텍처 (masterplan §3)
 - [x] L0 Raw → L1 KU → L2 Graph → L3 Generation 순서 준수
 - [x] CLI 명령어 체계 유지 (ks ingest, search, explore, generate)
-- [ ] I.pilot에서 `ks explore` 명령 추가 예정
+- [x] `ks explore` 명령 추가 완료 (I.4p)
 - [ ] J에서 `ks generate idea` 명령 추가 예정
 
 ### 지식 구조 (masterplan §5)
@@ -214,8 +217,8 @@ vault/domains/
 ### 데이터 (masterplan §4-7)
 - [x] 5개 테이블 스키마 변경 없음
 - [x] ChromaDB ku_embeddings 컬렉션 재사용
-- [ ] I.pilot에서 edges 테이블 활성화 예정
-- [ ] edge CRUD 헬퍼 함수 models.py에 추가 예정
+- [x] edges 테이블 활성화 — 11,662 edges
+- [x] edge CRUD 헬퍼 함수 models.py에 추가 완료
 
 ### 인코딩
 - [x] CSV 읽기: `utf-8-sig`

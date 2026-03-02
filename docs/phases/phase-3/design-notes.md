@@ -1,5 +1,5 @@
 # Phase 3: 87권 확장 + 그래프 레이어 — Design Notes
-> Last Updated: 2026-03-01
+> Last Updated: 2026-03-02
 
 ## 전략 변경: 일괄 처리 → Pilot First
 
@@ -146,17 +146,27 @@ DOMAIN_PROMPT_OVERRIDES = {
 
 | Bug # | Module | Issue | Fix | File |
 |-------|--------|-------|-----|------|
-| - | - | Phase 3 시작 전 | - | - |
+| 1 | edge_builder | SQLite conn 멀티쓰레드 공유 시 ProgrammingError | KU 데이터 메인쓰레드에서 pre-load → dict로 전달 | `src/graph/edge_builder.py` |
+| 2 | build_edges | OpenAI 429 quota exceeded (~50건) | 전체 0.4% 미만, 무시 가능 | `scripts/build_edges.py` |
+
+### Bug-1: SQLite 멀티쓰레드 conn 공유
+
+**증상:** `ThreadPoolExecutor`로 병렬 edge 생성 시 `sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread`
+
+**원인:** `models.py`의 conn 객체를 worker 쓰레드에서 직접 사용. SQLite는 기본적으로 쓰레드 간 conn 공유를 허용하지 않음.
+
+**수정:** `build_edges()`에서 edge 생성 전에 필요한 KU 데이터를 메인 쓰레드에서 모두 읽어 dict로 변환. worker 쓰레드는 dict만 참조하고 DB 접근 안 함. `llm_cache.py`는 호출마다 새 conn을 생성하므로 안전.
 
 ---
 
 ## 열린 질문 (Open Questions)
 
-- [ ] 파일럿 도서 구체적 선정 — 카탈로그 생성 후 분량/토픽 기준으로 결정
+- [x] 파일럿 도서 구체적 선정 — 카탈로그 status=pilot 기반 (도메인당 1권)
 - [ ] ChromaDB 75,000+ embedding 성능 — 벤치마크 필요
 - [ ] Vault 75,000+ 파일 시 Obsidian 성능 — 대규모 vault 테스트 필요
 - [x] within-book edge 먼저? cross-domain 먼저? — within-book 우선 (높은 신뢰도)
 - [x] 87권 배치 시간 — 1권당 ~3-5분 × 86권 ≈ 4-7시간
+- [ ] Cross-domain edge 전략 — 임베딩 유사도 0.35 threshold로는 부족, 전용 전략 설계 필요
 
 ---
 
@@ -167,29 +177,40 @@ DOMAIN_PROMPT_OVERRIDES = {
 - 기존 DB의 INSERT OR IGNORE 패턴 덕분에 배치 재실행이 안전
 - **현재 코드에 캐시/체크포인트 메커니즘이 전혀 없음** → H.cache에서 반드시 해결
 - **비경제 도메인 KU 품질은 실제 실행 전까지 알 수 없음** → Pilot First 전략 필수
+- **SQLite conn은 쓰레드 간 공유 불가** → pre-load 패턴 또는 쓰레드별 새 conn 생성
+- **LLM strength 점수는 실질적 이진 판단** — 관계 인정 시 99.1%가 0.7+ → fine-grained ranking 부적합
+- **Cross-domain edge는 임베딩 유사도만으로 부족** — threshold 하향 또는 토픽 기반 매칭 등 전용 전략 필요
+- **Edge 생성 실측 비용** — 4권 11,662 edges에 60분, gpt-4.1-mini (87권 확장 시 추정치 산정 근거)
 
 ---
 
 ## Modified Files Summary
 
 ```
-수정:
+수정 (완료):
 ├── src/ingest/ku_extractor.py    — DOMAIN_SHORT_MAP, domain_short 파라미터화, 캐시 래퍼 통합
-├── src/vault/renderer.py         — _domain_to_dir(), Connections 섹션 실제 링크
-├── src/cli.py                    — ks explore, ks generate idea 추가
-├── src/db/models.py              — edge CRUD 헬퍼 추가
+├── src/vault/renderer.py         — _domain_to_dir(), Connections 섹션
+├── src/cli.py                    — ks explore 명령 추가 ✅
+├── src/db/models.py              — edge CRUD 3함수 추가 ✅
 └── config.yaml                   — books 제거, catalog/batch 섹션 추가
 
-신규:
-├── src/ingest/llm_cache.py       — LLM 응답 캐시 (비용 절감 핵심)
-├── books_catalog.yaml            — 87권 메타데이터 카탈로그
-├── scripts/build_catalog.py      — 카탈로그 생성 스크립트
-├── scripts/migrate_data.py       — 데이터 마이그레이션 스크립트
-├── scripts/batch_ingest.py       — 배치 처리 스크립트 (--pilot/--all)
-├── src/graph/__init__.py         — graph 패키지
-├── src/graph/edge_builder.py     — edge 생성
-├── src/graph/traversal.py        — 그래프 탐색
-├── src/graph/dispute.py          — Dispute axis 요약
-├── src/generation/idea.py        — 아이디어 생성
-└── src/search/hybrid.py          — 복합 검색
+신규 (완료):
+├── src/ingest/llm_cache.py       — LLM 응답 캐시 ✅
+├── books_catalog.yaml            — 87권 메타데이터 카탈로그 ✅
+├── scripts/build_catalog.py      — 카탈로그 생성 ✅
+├── scripts/migrate_data.py       — 데이터 마이그레이션 ✅
+├── scripts/batch_ingest.py       — 배치 처리 (--pilot/--all) ✅
+├── scripts/build_edges.py        — 배치 edge 생성 ✅
+├── src/graph/__init__.py         — graph 패키지 ✅
+├── src/graph/edge_builder.py     — edge 생성 (쓰레드 안전) ✅
+└── src/graph/traversal.py        — 그래프 탐색 (BFS + PathScore) ✅
+
+신규 (예정):
+├── src/graph/dispute.py          — Dispute axis 요약 (I.full)
+├── src/generation/idea.py        — 아이디어 생성 (J)
+└── src/search/hybrid.py          — 복합 검색 (J)
+
+리포트:
+├── reports/pilot_quality.md      — KU 품질 리포트 ✅
+└── reports/pilot_graph.md        — 그래프 품질 리포트 ✅
 ```

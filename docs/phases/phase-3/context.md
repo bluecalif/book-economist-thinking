@@ -62,14 +62,14 @@ DOMAIN_SHORT_MAP = {
 }
 ```
 
-### Phase 3 대상 도서 (12권)
+### Phase 3 대상 도서 (12권) — 전체 완료
 
-| 카테고리 | 완료 | 추가 예정 | 합계 |
-|---------|------|----------|------|
-| 역사/사회 | 0 | 3 | 3 |
-| 경제/경영 | 2 | 1 | 3 |
-| 인문/자기계발 | 1 | 2 | 3 |
-| 과학/기술 | 1 | 2 | 3 |
+| 카테고리 | 완료 | KU 수 | 도서 |
+|---------|------|-------|------|
+| 역사/사회 | 3 | 5,349 | hist-016(노이즈), hist-003(2030축의전환), hist-014(노동의시대는끝났다) |
+| 경제/경영 | 3 | 4,647 | econ-thinking-001(경제학자의생각법), econ-014(경영의모험), econ-022(내러티브경제학) |
+| 인문/자기계발 | 3 | 4,327 | humn-006(공정하다는착각), humn-001(12가지인생의법칙), humn-010(나는왜이일을하는가) |
+| 과학/기술 | 3 | 4,350 | sci-023(대량살상수학무기), sci-003(AI지도책), sci-010(그리드) |
 
 ### LLM 캐시 스키마
 
@@ -84,6 +84,16 @@ CREATE TABLE llm_cache (
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
+
+### Changed Files (H.9/H.10)
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `books_catalog.yaml` | 8권 status: pending → partial → done |
+| `logs/batch_progress.json` | 8권 인제스트 완료 기록 추가 |
+| `data/knowledge.db` | 12권 KU/spans 삽입 (18,673 KUs) |
+| `data/chroma/` | 18,673 임베딩 저장 |
+| `vault/domains/*/ku-*.md` | 8권 KU 마크다운 렌더링 |
 
 ### 데이터 디렉터리 구조 (Phase 3 목표)
 

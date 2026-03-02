@@ -1,6 +1,6 @@
 # Phase 3: Partially-Full (카테고리당 3권) + 성능 평가
-> Last Updated: 2026-03-02
-> Status: In Progress (Pilot ✅ → H.partial 대기)
+> Last Updated: 2026-03-03
+> Status: In Progress (H.partial ✅ → I.partial 대기)
 > **전제:** Phase 2 완료 (1권 파이프라인 + 검색 + 생성 + CLI + Vault)
 
 ## 1. Summary (개요)
@@ -32,23 +32,23 @@
 
 | 항목 | 값 |
 |------|---|
-| Books | 4 (4개 도메인 파일럿 완료) |
-| Raw Spans | 1,724 |
-| Knowledge Units | 5,872 |
-| ChromaDB Embeddings | 5,872 |
+| Books | 12 (4개 도메인 × 3권 완료) |
+| Raw Spans | 5,834 |
+| Knowledge Units | 18,673 |
+| ChromaDB Embeddings | 18,673 |
 | Generations | 2 |
-| Edges | 11,662 (within-book only) |
+| Edges | 11,662 (파일럿 4권 within-book only) |
 | LLM 캐시 | 구현 완료 |
 
 ### 도메인별 현황
 
-| 카테고리 | 전체 | 완료 | Phase 3 목표 | 추가 필요 |
-|---------|------|------|-------------|----------|
-| 역사/사회 | 18 | 0 | 3 | 3 |
-| 경제/경영 | 28 | 2 (econ-thinking-001 + 노이즈) | 3 | 1 |
-| 인문/자기계발 | 18 | 1 (공정하다는 착각) | 3 | 2 |
-| 과학/기술 | 23 | 1 (대량살상 수학무기) | 3 | 2 |
-| **합계** | **87** | **4** | **12** | **8** |
+| 카테고리 | 전체 | 완료 | KU 수 |
+|---------|------|------|-------|
+| 역사/사회 | 18 | 3 (노이즈, 2030축의전환, 노동의시대는끝났다) | 5,349 |
+| 경제/경영 | 28 | 3 (경제학자의생각법, 경영의모험, 내러티브경제학) | 4,647 |
+| 인문/자기계발 | 18 | 3 (공정하다는착각, 12가지인생의법칙, 나는왜이일을하는가) | 4,327 |
+| 과학/기술 | 23 | 3 (대량살상수학무기, AI지도책, 그리드) | 4,350 |
+| **합계** | **87** | **12** | **18,673** |
 
 ---
 
@@ -72,7 +72,7 @@ Phase 3 완료 후:
 ```
 H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate ✅
                                                            ↓ PASS
-                                              H.partial (~$2.2) → I.partial (~$5-10)
+                                              H.partial (~$2.2) ✅ → I.partial (~$5-10)
                                                                         ↓
                                                               J ($0-1) → K ($1-3)
                                                                           ↓
@@ -95,13 +95,9 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 
 (기존과 동일)
 
-### Stage H.partial: 추가 8권 인제스트 (~$2.2) — 2 Tasks
+### Stage H.partial: 추가 8권 인제스트 (~$2.2) — ✅ 완료
 
-**목표:** 카테고리당 3권으로 확장 (8권 추가 인제스트)
-
-**도서 선정 기준:** 도메인 다양성 + 서술 유형 다양성
-
-**의존성:** Quality Gate 통과
+8권 추가 인제스트 완료. 12권 전체 검증 통과. (books=12, kus=18,673)
 
 ### Stage I.partial: 12권 edge 생성 (~$5-10) — 4 Tasks
 
@@ -151,11 +147,11 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 | H.infra | 6 ✅ | S:4, M:2 |
 | H.pilot | 3 ✅ | S:1, M:1, L:1 |
 | I.pilot | 5 ✅ | S:2, M:2, L:1 |
-| H.partial | 2 | M:1, L:1 |
+| H.partial | 2 ✅ | M:1, L:1 |
 | I.partial | 4 | S:1, M:2, L:1 |
 | J | 3 | M:2, L:1 |
 | K | 4 | S:1, M:2, L:1 |
-| **합계** | **27** | 완료 14, 잔여 13 |
+| **합계** | **27** | 완료 16, 잔여 11 |
 
 ---
 
@@ -197,7 +193,7 @@ Phase 2 (완료) → H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gat
 | 단계 | 항목 | 비용 | 상태 |
 |------|------|------|------|
 | H.infra~Quality Gate | 파일럿 KU + edge | ~$4 | ✅ 완료 |
-| H.partial | 추가 8권 KU 추출 | ~$2.2 | 대기 |
+| H.partial | 추가 8권 KU 추출 | ~$2.2 | ✅ 완료 |
 | I.partial | 12권 edge 생성 | ~$5-10 | 대기 |
 | J | 아이디어 생성 테스트 | ~$0-1 | 대기 |
 | K | 성능 평가 (생성 테스트) | ~$1-3 | 대기 |

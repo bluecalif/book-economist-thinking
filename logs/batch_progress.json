@@ -1,0 +1,23 @@
+{
+  "books": {
+    "humn-006": {
+      "status": "done",
+      "finished_at": "2026-03-01T22:55:54.031350",
+      "kus_extracted": 1483,
+      "parse_success_rate": 0.9872
+    },
+    "hist-016": {
+      "status": "done",
+      "finished_at": "2026-03-01T23:08:39.013845",
+      "kus_extracted": 2047,
+      "parse_success_rate": 0.9918
+    },
+    "sci-023": {
+      "status": "done",
+      "finished_at": "2026-03-01T23:17:10.150233",
+      "kus_extracted": 1345,
+      "parse_success_rate": 0.9921
+    }
+  },
+  "last_updated": "2026-03-01T23:17:10.150233"
+}

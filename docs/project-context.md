@@ -1,18 +1,18 @@
 # Project Context
-> Last Updated: 2026-03-01
+> Last Updated: 2026-03-02
 
 ## Tech Stack
 
 | 계층 | 기술 | 버전/비고 |
 |------|------|----------|
 | 언어 | Python | 3.12 (anaconda3) |
-| LLM API | Claude / GPT-4o / GPT-4o mini | KU 추출은 GPT-4o mini 우선 |
+| LLM API | GPT-4.1-mini | KU 추출, edge 생성 |
 | 임베딩 | text-embedding-3-large (OpenAI) | 정확도 우선 |
-| Vector DB | ChromaDB | 로컬, 13,000 KU 규모 충분 |
+| Vector DB | ChromaDB | 로컬, 13,000~75,000 KU 규모 |
 | 관계형 DB | SQLite | 로컬, 제로 설정 |
-| CLI | Typer (유력) / Click | Stage G 시작 시 최종 확정 |
+| CLI | Typer | 타입 힌트 기반 |
 | 마크다운 출력 | Obsidian 호환 | 시각적 탐색 + 수동 편집 |
-| 웹 크롤링 | Requests + BeautifulSoup / Playwright | Phase 4에서 도입 |
+| 웹 크롤링 | Requests + BeautifulSoup / Playwright | Phase 5에서 도입 |
 | 개발 환경 | Windows 10, Git Bash, Claude Code | |
 
 ### 스택 원칙
@@ -90,13 +90,14 @@ generations (id TEXT PK, mode, format, prompt, output, ku_ids JSON, rating INT, 
 ```
 src/
 ├── cli.py
-├── ingest/ (pdf_parser.py, ku_extractor.py, llm_cache.py)
+├── ingest/ (pdf_parser.py, ku_extractor.py, llm_cache.py, splitter.py)
 ├── search/ (vector.py, hybrid.py)
 ├── generation/ (content.py, idea.py, templates/)
 ├── graph/ (edge_builder.py, traversal.py, dispute.py)
 ├── db/ (models.py, vectors.py)
 └── vault/ (renderer.py)
 data/ (knowledge.db, llm_cache.db, chroma/, raw/)
+scripts/ (batch_ingest.py, build_edges.py, build_catalog.py, migrate_data.py)
 vault/ (Obsidian 호환 마크다운)
 config.yaml
 pyproject.toml
@@ -106,41 +107,28 @@ pyproject.toml
 
 ## Shared Dependencies
 
-### Python 패키지 (Phase 1: 데이터 파이프라인)
+### Python 패키지
 - `pymupdf` — PDF 파싱
 - `chromadb` — 벡터 DB
-- `openai` — 임베딩 + GPT-4o mini
+- `openai` — 임베딩 + GPT-4.1-mini
 - `anthropic` — Claude API
 - `pydantic` — 데이터 검증
 - `pyyaml` — config 파싱
-
-### Python 패키지 (Phase 2: 서비스 레이어, 추가분)
-- `typer` 또는 `click` — CLI
-- `rich` — CLI 출력 포매팅 (선택)
+- `typer` — CLI
+- `rich` — CLI 출력 포매팅
 
 ### 외부 서비스
-- OpenAI API — 임베딩, KU 추출 (GPT-4o mini)
+- OpenAI API — 임베딩, KU 추출, edge 생성 (GPT-4.1-mini)
 - Anthropic API — 생성 (Claude)
 
-### Python 패키지 (Phase 3: 87권 확장, 추가분)
-- 없음 (기존 패키지로 충분)
+### 데이터베이스
+- `data/llm_cache.db` — LLM 응답 캐시 (SQLite, hash 기반 키)
 
-### 데이터베이스 (Phase 3 추가)
-- `data/llm_cache.db` — LLM 응답 캐시 (SQLite, hash 기반 키, 재실행 비용 $0)
-
-### 기존 자산
-- `55bbe4_경제학자의_생각법_text.json` — Phase 1에서 사용한 원본
-- `data/raw/` — Phase 3에서 87권 text.json 마이그레이션 대상 디렉터리
-- `books_catalog.yaml` — Phase 3에서 생성할 87권 메타데이터 카탈로그
-
-### 외부 자산 (Phase 3)
-- `C:\Projects-2026\maintenance\books-final-processor\data\output\text\` — 87권 text.json (1회 복사)
-- `C:\Projects-2026\maintenance\books-final-processor\docs\100권 노션 원본_수정.csv` — 도서 메타데이터 (1회 참조)
-
-### 도메인 체계 (Phase 3~)
-| 카테고리 | domain_short | 권수 |
-|---------|-------------|-----|
-| 역사/사회 | hist | 18 |
-| 경제/경영 | econ | 28 |
-| 인문/자기계발 | humn | 18 |
-| 과학/기술 | sci | 23 |
+### 도메인 체계
+| 카테고리 | domain_short | 전체 | Phase 3 | Phase 4 |
+|---------|-------------|------|---------|---------|
+| 역사/사회 | hist | 18 | 3 | 18 |
+| 경제/경영 | econ | 28 | 3 | 28 |
+| 인문/자기계발 | humn | 18 | 3 | 18 |
+| 과학/기술 | sci | 23 | 3 | 23 |
+| **합계** | | **87** | **12** | **87** |

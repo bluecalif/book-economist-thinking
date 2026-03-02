@@ -1,14 +1,14 @@
 # Project Tasks
-> Last Updated: 2026-03-01
+> Last Updated: 2026-03-02
 
 ## Overall Progress
 
 | 항목 | 값 |
 |------|---|
-| 전체 Phase | 5개 (Phase 5는 조건부) |
+| 전체 Phase | 6개 (Phase 6는 조건부) |
 | 완료 Phase | 2 (Phase 1, Phase 2) |
-| 현재 Phase | Phase 3 — 87권 확장 + 그래프 레이어 |
-| 현재 Stage | Stage H (87권 마이그레이션 + 배치) 착수 대기 |
+| 현재 Phase | Phase 3 — Partially-Full 12권 + 성능 평가 |
+| 현재 Stage | H.partial 착수 대기 (파일럿 완료, Quality Gate PASS) |
 
 ---
 
@@ -16,11 +16,12 @@
 
 | Phase | Status | Progress | Current Step | 비고 |
 |-------|--------|----------|--------------|------|
-| Phase 1: 데이터 파이프라인 (A~D) | Complete ✅ | 18/18 Tasks (100%) | 전체 완료 | `4d33a2a` |
-| Phase 2: 서비스 레이어 (E~G) | Complete ✅ | 11/11 Tasks (100%) | 전체 완료 | `acc1942` |
-| Phase 3: 87권 확장 + 그래프 (H~J) | Planning | 0/23 Tasks (0%) | Stage H.infra 착수 대기 | dev-docs: `docs/phases/phase-3/` |
-| Phase 4: 진화 (Evolution) | Planned | - | - | Phase 3 완료 후 |
-| Phase 5: 웹 UI | Conditional | - | - | 가치 검증 통과 시 |
+| Phase 1: 데이터 파이프라인 (A~D) | Complete ✅ | 18/18 (100%) | 전체 완료 | `4d33a2a` |
+| Phase 2: 서비스 레이어 (E~G) | Complete ✅ | 11/11 (100%) | 전체 완료 | `acc1942` |
+| Phase 3: Partially-Full 12권 (H~K) | In Progress | 14/27 (52%) | H.partial 대기 | Pilot ✅ QG ✅ |
+| Phase 4: 전체 도서 확장 (M~P) | Planning | 0/11 (0%) | Phase 3 완료 후 | dev-docs 생성됨 |
+| Phase 5: 진화 (Evolution) | Planned | - | - | Phase 4 완료 후 |
+| Phase 6: 웹 UI | Conditional | - | - | 가치 검증 통과 시 |
 
 ---
 
@@ -45,17 +46,31 @@
 
 ---
 
-## Phase 3 Tasks (0/23) — Pilot First 전략
+## Phase 3 Tasks (14/27) — Partially-Full + 평가
 
 → 상세: `docs/phases/phase-3/tasks.md`
 
-### Stage H.infra: 인프라 준비 ($0) — 0/6
-### Stage H.pilot: 파일럿 인제스트 (~$1) — 0/3
-### Stage I.pilot: 파일럿 그래프 (추정 $2-5) — 0/5
-### Quality Gate: 품질 판정
-### Stage H.full: 전체 배치 (~$23) — 0/2
-### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 0/4
-### Stage J: Generation 확장 + Hybrid ($0) — 0/3
+### Stage H.infra: 인프라 준비 ($0) — 6/6 ✅
+### Stage H.pilot: 파일럿 인제스트 (~$1) — 3/3 ✅
+### Stage I.pilot: 파일럿 그래프 (~$3) — 5/5 ✅
+### Quality Gate: 품질 판정 — ✅ PASS
+### Stage H.partial: 추가 8권 인제스트 (~$2.2) — 0/2
+### Stage I.partial: 12권 edge 생성 (~$5-10) — 0/4
+### Stage J: Generation 확장 + Hybrid ($0-1) — 0/3
+### Stage K: 성능 평가 + 로직 개선 ($1-3) — 0/4
+
+**현재 메트릭:** books=4, spans=1,724, kus=5,872, chroma=5,872, edges=11,662
+
+---
+
+## Phase 4 Tasks (0/11) — 전체 도서 확장
+
+→ 상세: `docs/phases/phase-4/tasks.md`
+
+### Stage M: 사전 확인 ($0) — 0/2
+### Stage N: 75권 인제스트 (~$21) — 0/3
+### Stage O: 전체 edge 생성 (~$15-30) — 0/4
+### Stage P: 통합 검증 ($0-1) — 0/2
 
 ---
 
@@ -74,10 +89,13 @@
 | 9 | Phase 1 MVP → Phase 1+2 분리 | Infra | 2026-02-27 | 데이터 파이프라인(A~D)과 서비스 레이어(E~G) 분리 |
 | 10 | text-embedding-3-large 확정 | Phase 1 | 2026-02-28 | small → large 전환, 정확도 우선 |
 | 11 | similarity threshold 0.6 | Phase 2 | 2026-02-28 | 10쿼리 튜닝 결과, cosine distance 기준 |
-| 12 | 4개 카테고리 그대로 사용 | Phase 3 | 2026-03-01 | books-final-processor CSV 분야 컬럼 활용, 7도메인 세분화 안 함 |
+| 12 | 4개 카테고리 그대로 사용 | Phase 3 | 2026-03-01 | books-final-processor CSV 분야 컬럼 활용 |
 | 13 | text.json 프로젝트 내 복사 (standalone) | Phase 3 | 2026-03-01 | 프로젝트가 모든 지식 소스 자체 포함 |
-| 14 | domain_short 매핑: hist/econ/humn/sci | Phase 3 | 2026-03-01 | KU ID 4자리 약어, 기존 econ 호환 |
+| 14 | domain_short 매핑: hist/econ/humn/sci | Phase 3 | 2026-03-01 | KU ID 4자리 약어 |
 | 15 | 기존 domain "경제"→"경제/경영" 통일 | Phase 3 | 2026-03-01 | 4개 카테고리 체계로 일관성 확보 |
-| 16 | Pilot First 전략 채택 | Phase 3 | 2026-03-01 | 87권 일괄 → 4권 파일럿 → Quality Gate → 전체. 검증 전 리스크 ~$3-6 (실측 기반) |
-| 17 | LLM 응답 캐시 도입 | Phase 3 | 2026-03-01 | `llm_cache.py` + `llm_cache.db`. 프롬프트 튜닝 후 재실행 비용 $0 |
-| 18 | KU + Graph 함께 파일럿 검증 | Phase 3 | 2026-03-01 | end-to-end 품질 확인, 별도 검증 대비 판단 포인트 축소 |
+| 16 | Pilot First 전략 채택 | Phase 3 | 2026-03-01 | 비경제 도메인 KU 품질 미검증 |
+| 17 | LLM 응답 캐시 도입 | Phase 3 | 2026-03-01 | 재실행 비용 $0 |
+| 18 | KU + Graph 함께 파일럿 검증 | Phase 3 | 2026-03-01 | end-to-end 품질 확인 |
+| **19** | **Phase 3 범위를 카테고리당 3권(12권)으로 축소** | **Phase 3** | **2026-03-02** | **전체 파이프라인 완성 + 성능 평가 우선, 전체 확장은 Phase 4** |
+| **20** | **Phase 4를 전체 도서 확장으로 재정의** | **Phase 4** | **2026-03-02** | **Phase 3 로직 개선 완료 후 나머지 75권 확장** |
+| **21** | **Stage K 성능 평가 추가** | **Phase 3** | **2026-03-02** | **로직 개선 기회를 전체 확장 전에 확보** |

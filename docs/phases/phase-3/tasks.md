@@ -1,7 +1,7 @@
-# Phase 3: 87권 확장 + 그래프 레이어 — Tasks
+# Phase 3: Partially-Full (카테고리당 3권) — Tasks
 > Last Updated: 2026-03-02
 
-## Progress: 14/23 Tasks (61%)
+## Progress: 14/27 Tasks (52%)
 
 ---
 
@@ -87,40 +87,43 @@
 | 4 | Edge 성공률 | ≥ 80% | 85.5% | ✅ |
 | 5 | Edge/KU 비율 | ≥ 1.0 | 1.99 | ✅ |
 
-**참고:** cross-domain edge 0건 (후보 35건 전부 LLM 거부) — 향후 전용 전략 필요
+**참고:** cross-domain edge 0건 (후보 35건 전부 LLM 거부) — I.partial에서 전용 전략 개선
 
 ---
 
-### Stage H.full: 나머지 83권 배치 (~$23) — 0/2
+### Stage H.partial: 추가 8권 인제스트 (~$2.2) — 0/2
 
-- [ ] H.9 나머지 83권 배치 인제스트
-  - `python scripts/batch_ingest.py --all` (done/pilot 자동 skip)
-  - 도메인별 분할 실행 가능 (`--domain`)
-  - 예상 시간: 4-6시간
-- [ ] H.10 전체 검증 + Vault 재렌더링
-  - `ks stats` → books=87, spans≥25,000, kus≥75,000
-  - 4개 도메인 Vault 디렉터리 구조 확인
-  - 도메인별 KU 분포 균형 확인
+- [ ] H.9 카테고리당 추가 2권 선정 + 인제스트 실행
+  - 역사/사회: 3권 신규 (현재 0권)
+  - 경제/경영: 1권 추가 (현재 2권)
+  - 인문/자기계발: 2권 추가 (현재 1권)
+  - 과학/기술: 2권 추가 (현재 1권)
+  - `python scripts/batch_ingest.py --books <ids>` 실행
+  - 예상 비용: ~$0.28/권 × 8 = ~$2.2
+- [ ] H.10 12권 전체 검증 + Vault 재렌더링
+  - `ks stats` → books=12, spans≥5,000, kus≥18,000
+  - 4개 도메인 Vault 디렉터리 확인
+  - 도메인별 KU 분포 확인
 
 ---
 
-### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 0/4
+### Stage I.partial: 12권 edge 생성 (~$5-10) — 0/4
 
-- [ ] I.6 전체 within-book edge 생성
-  - 87권 각각 실행 (파일럿 done 자동 skip)
-- [ ] I.7 전체 cross-domain edge 생성
+- [ ] I.6 신규 8권 within-book edge 생성
+  - `python scripts/build_edges.py` (파일럿 done 자동 skip)
+- [ ] I.7 cross-domain edge 전략 개선 + 생성
+  - 기존 임베딩 유사도 0.35 threshold 부족 → 전용 전략 설계
+  - 토픽 기반 매칭, 도메인 쌍별 대표 KU 비교 등 실험
   - 4개 도메인 간 교차 edge 생성
 - [ ] I.8 Vault connections 업데이트
-  - `renderer.py`의 `## Connections` 섹션에 실제 edge 기반 링크 생성
-  - 현재 "(Phase 3에서 edges 기반 자동 생성)" → 실제 [[wikilink]] 교체
+  - `renderer.py`의 `## Connections` 섹션에 실제 edge 기반 [[wikilink]]
 - [ ] I.9 Dispute axis 자동 요약
   - `src/graph/dispute.py` 신규 생성
   - contradicts edge 클러스터 → LLM 논쟁 축 요약
-  - `vault/disputes/` 출력
 
 ---
 
-### Stage J: Generation 확장 + Hybrid Search ($0) — 0/3
+### Stage J: Generation 확장 + Hybrid Search ($0-1) — 0/3
 
 - [ ] J.1 `src/search/hybrid.py` — Vector + Graph 복합 검색
   - Vector Search로 시드 KU → Graph 1-2 hop 확장
@@ -129,24 +132,39 @@
   - business: 비즈니스 모델/서비스 아이디어
   - content: 콘텐츠 시리즈/주제 기획
   - serendipity: 랜덤 cross-domain 조합
-  - `src/generation/content.py` 패턴 참조
 - [ ] J.3 CLI `ks generate idea` + 통합 테스트
-  - `ks generate idea --mode business --domains 경제/경영,과학/기술`
-  - E2E 테스트: 아이디어 생성 → KU 역참조 확인
+
+---
+
+### Stage K: 성능 평가 + 로직 개선 ($1-3) — 0/4
+
+- [ ] K.1 콘텐츠 생성 품질 평가
+  - 다양한 토픽 10건+ 생성 → 품질 평가 (게시 가능성)
+  - KU 출처 추적 정확도 확인
+- [ ] K.2 아이디어 생성 평가
+  - business/content/serendipity 각 모드 5건+ 생성
+  - 실행 가능성 정성 평가
+- [ ] K.3 Cross-domain 가치 평가
+  - 단일 도메인 vs cross-domain 검색 비교
+  - cross-domain edge 품질 샘플링
+- [ ] K.4 로직 개선 실행 (필요 시)
+  - KU 추출 프롬프트 튜닝
+  - Edge 전략 보정
+  - 생성 템플릿 다양화
+  - 개선 사항 Phase 4 반영 계획 수립
 
 ---
 
 ## Stage 의존성
 
 ```
-Phase 2 (완료) → H.infra (H.1~H.5, H.cache 병렬) → H.pilot (H.6p→H.7p→H.8p)
-                                                                    ↓
-                                                        I.pilot (I.1p→I.2p→I.3p→I.4p)
-                                                               I.2p→I.5p
-                                                                    ↓
-                                                             Quality Gate
-                                                                    ↓ PASS
-                                                    H.full (H.9→H.10) → I.full (I.6→I.7→I.8, I.7→I.9)
-                                                                                        ↓
-                                                                                 J (J.1→J.2→J.3)
+Phase 2 (완료) → H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gate ✅
+                                                           ↓ PASS
+                                          H.partial (H.9→H.10) → I.partial (I.6→I.7→I.8, I.7→I.9)
+                                                                                    ↓
+                                                                             J (J.1→J.2→J.3)
+                                                                                    ↓
+                                                                    K (K.1, K.2, K.3 병렬 → K.4)
+                                                                                    ↓
+                                                                             Phase 4
 ```

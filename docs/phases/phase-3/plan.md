@@ -1,37 +1,34 @@
-# Phase 3: 87권 확장 + 그래프 레이어 (Pilot First)
+# Phase 3: Partially-Full (카테고리당 3권) + 성능 평가
 > Last Updated: 2026-03-02
-> Status: In Progress (H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gate ✅ → H.full 대기)
+> Status: In Progress (Pilot ✅ → H.partial 대기)
 > **전제:** Phase 2 완료 (1권 파이프라인 + 검색 + 생성 + CLI + Vault)
 
 ## 1. Summary (개요)
 
-**목적:** 1권 파이프라인을 87권으로 확장하고, KU 간 관계 그래프(L2)를 구축하여 cross-domain 지식 연결 및 아이디어 생성을 가능하게 한다.
+**목적:** 카테고리당 3권(총 12권)으로 KU + Edge + Generation + Search 파이프라인을 end-to-end 완성하고, 전체 프로젝트 성능과 목표 달성도를 평가한다. 필요 시 KU/Graph 로직을 개선한다.
 
-**전략 변경 (v1→v2):** 87권 전체 인제스트 후 그래프 구축 → **4권 파일럿으로 KU+Graph end-to-end 검증 후 전체 확장.** 비용 리스크를 1/3로 줄이고, 비경제 도메인 KU 품질을 조기 검증.
+**전략 변경 (v2→v3):** 87권 전체 확장 → **카테고리당 3권 partially-full**. 전체 파이프라인(L0~L3)을 소규모로 완성하고, 성능 평가 후 로직 개선을 거쳐 Phase 4에서 전체 확장.
 
 **범위:**
-- H.infra: 인프라 준비 (코드 수정, 카탈로그, 마이그레이션, LLM 캐시)
-- H.pilot: 4권 파일럿 인제스트 (도메인당 1권)
-- I.pilot: 파일럿 그래프 레이어 (edge 생성 + 탐색)
-- Quality Gate: 품질 판정 + 프롬프트 튜닝
-- H.full: 나머지 83권 배치 인제스트
-- I.full: 전체 그래프 레이어 + Dispute axis
+- H.infra: 인프라 준비 (코드 수정, 카탈로그, 마이그레이션, LLM 캐시) ✅
+- H.pilot: 4권 파일럿 인제스트 (도메인당 1권) ✅
+- I.pilot: 파일럿 그래프 레이어 (edge 생성 + 탐색) ✅
+- Quality Gate: 품질 판정 ✅ PASS
+- **H.partial: 카테고리당 추가 2권 인제스트 (8권 추가 → 총 12권)**
+- **I.partial: 12권 전체 edge 생성 + cross-domain edge**
 - J: Generation 확장 (아이디어 생성 + 하이브리드 검색)
+- **K: 성능 평가 + 로직 개선**
 
 **예상 산출물:**
-- 87권 text.json 데이터 (`data/raw/`)
-- 87권 book catalog (`books_catalog.yaml`)
-- LLM 응답 캐시 (`src/ingest/llm_cache.py`, `data/llm_cache.db`)
-- 배치 처리 스크립트 (`scripts/batch_ingest.py`)
-- ~75,000+ KUs + ChromaDB embeddings
-- 수천 개 edges (within-book + cross-domain)
-- `src/graph/` 모듈 (edge_builder, traversal, dispute)
+- 12권 KU + ChromaDB embeddings (~18,000 KU 추정)
+- 12권 within-book + cross-domain edges
 - `src/generation/idea.py` + `src/search/hybrid.py`
-- 4개 도메인 Vault 구조
+- 성능 평가 리포트 (`reports/phase3_evaluation.md`)
+- 로직 개선 사항 (필요 시)
 
 ---
 
-## 2. Current State (Phase 2 산출물)
+## 2. Current State (현재 상태)
 
 | 항목 | 값 |
 |------|---|
@@ -40,25 +37,31 @@
 | Knowledge Units | 5,872 |
 | ChromaDB Embeddings | 5,872 |
 | Generations | 2 |
-| Edges | **11,662** (within-book only) |
-| LLM 캐시 | 구현 완료 (`data/llm_cache.db`) |
+| Edges | 11,662 (within-book only) |
+| LLM 캐시 | 구현 완료 |
 
-**사용 가능한 외부 데이터:**
-- `C:\Projects-2026\maintenance\books-final-processor\data\output\text\` — 87권 text.json
-- `C:\Projects-2026\maintenance\books-final-processor\docs\100권 노션 원본_수정.csv` — 87권 메타데이터
+### 도메인별 현황
+
+| 카테고리 | 전체 | 완료 | Phase 3 목표 | 추가 필요 |
+|---------|------|------|-------------|----------|
+| 역사/사회 | 18 | 0 | 3 | 3 |
+| 경제/경영 | 28 | 2 (econ-thinking-001 + 노이즈) | 3 | 1 |
+| 인문/자기계발 | 18 | 1 (공정하다는 착각) | 3 | 2 |
+| 과학/기술 | 23 | 1 (대량살상 수학무기) | 3 | 2 |
+| **합계** | **87** | **4** | **12** | **8** |
 
 ---
 
 ## 3. Target State (목표 상태)
 
 Phase 3 완료 후:
-- `ks stats` → books=87, spans≥25,000, kus≥75,000, chroma≥75,000
+- `ks stats` → books=12, spans≥5,000, kus≥18,000, chroma≥18,000
+- Within-book + cross-domain edges 생성 완료
 - `ks search "기술 혁신과 노동시장"` → 다수 도메인에서 KU 반환
 - `ks explore ku-id --depth 2` → 연결된 KU 탐색
-- `ks generate idea --mode business --domains 경제/경영,과학/기술` → 아이디어 후보 생성
-- `vault/domains/` 하위 4개 도메인 디렉터리 구조
-- Cross-domain 연결에서 실제 유용한 통찰 산출
-- LLM 캐시로 재실행 시 비용 절감
+- `ks generate idea --mode business --domains 경제/경영,과학/기술` → 아이디어 생성
+- **성능 평가 리포트**: 콘텐츠 생성 품질, 아이디어 유용성, cross-domain 가치 측정
+- **로직 개선 사항 반영** (필요 시)
 
 ---
 
@@ -67,149 +70,103 @@ Phase 3 완료 후:
 ### 전체 흐름
 
 ```
-H.infra ($0) → H.pilot (~$1) → I.pilot (추정 $2-5) → Quality Gate
-                                                         ├─ PASS → H.full (~$23) → I.full (추정 $10-20) → J ($0)
-                                                         └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 덕분에 비용 최소)
+H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate ✅
+                                                           ↓ PASS
+                                              H.partial (~$2.2) → I.partial (~$5-10)
+                                                                        ↓
+                                                              J ($0-1) → K ($1-3)
+                                                                          ↓
+                                                         로직 개선 완료 확인 → Phase 4
 ```
 
-### Stage H.infra: 인프라 준비 (API 비용 $0) — 6 Tasks
+### Stage H.infra: 인프라 준비 ($0) — ✅ 완료
 
-**목표:** 87권 처리를 위한 코드 파라미터화, 데이터 마이그레이션, LLM 캐시 구축
+(기존과 동일, 6 Tasks 완료)
 
-**주요 변경:**
-- `books_catalog.yaml` — 87권 메타데이터 카탈로그 (status: done/pilot/pending)
-- `data/raw/{domain_dir}/` — 87개 text.json 복사
-- `src/ingest/ku_extractor.py` — domain_short 파라미터화
-- `src/vault/renderer.py` — 슬래시 도메인 경로 처리
-- `src/ingest/llm_cache.py` — **LLM 응답 캐시 (비용 절감 핵심)**
-- 기존 DB 도메인 통일 (`경제` → `경제/경영`)
+### Stage H.pilot: 파일럿 인제스트 (~$1) — ✅ 완료
 
-**의존성:** Phase 2 완료
+(기존과 동일, 3 Tasks 완료)
 
-### Stage H.pilot: 파일럿 인제스트 (~$1) — 3 Tasks
+### Stage I.pilot: 파일럿 그래프 (~$3) — ✅ 완료
 
-**목표:** 4개 도메인 각 1권(경제는 기존 재사용, 3권 신규) 인제스트 + KU 품질 검증
+(기존과 동일, 5 Tasks 완료)
 
-**파일럿 도서:** 도메인당 1권, 서로 다른 서술 유형(서술형/논증형/에세이형/기술형)
-- 경제/경영: 경제학자의 생각법 (기존 재사용, $0)
-- 역사/사회, 인문/자기계발, 과학/기술: 각 1권 신규 (~$0.28/권)
+### Quality Gate: 품질 판정 — ✅ PASS
 
-> **실측 데이터 (econ-thinking 1권):** input $0.09 (220K tokens) + output $0.19 (110K tokens) = **$0.28/권**
+(기존과 동일)
 
-**의존성:** H.infra 완료
+### Stage H.partial: 추가 8권 인제스트 (~$2.2) — 2 Tasks
 
-### Stage I.pilot: 파일럿 그래프 (추정 $2-5) — 5 Tasks
+**목표:** 카테고리당 3권으로 확장 (8권 추가 인제스트)
 
-**목표:** 4-5권 KU로 edge 생성 + 그래프 탐색 end-to-end 검증
-
-- within-book edge + cross-domain edge 생성
-- 그래프 탐색 모듈 + CLI `ks explore`
-- 품질 리포트 출력
-
-**의존성:** H.pilot 완료
-
-### Quality Gate: 품질 판정
-
-**목표:** 전체 확장 전 KU + Graph 품질 검증
-
-| # | 메트릭 | 목표 |
-|---|--------|------|
-| 1 | 도메인별 parse 성공률 | ≥ 95% |
-| 2 | 도메인별 claim 존재율 | ≥ 80% |
-| 3 | cross-domain edge 의미 적합도 | ≥ 60% (수동 10건) |
-| 4 | within-book edge 의미 적합도 | ≥ 70% (수동 10건) |
-
-PASS → H.full 진행 / FAIL → 프롬프트 튜닝 후 재실행 (캐시 히트로 비용 최소)
-
-### Stage H.full: 나머지 83권 배치 (~$23) — 2 Tasks
-
-**목표:** 나머지 83권 인제스트 (파일럿/done 자동 skip)
+**도서 선정 기준:** 도메인 다양성 + 서술 유형 다양성
 
 **의존성:** Quality Gate 통과
 
-### Stage I.full: 전체 그래프 + Dispute (추정 $10-20) — 4 Tasks
+### Stage I.partial: 12권 edge 생성 (~$5-10) — 4 Tasks
 
-**목표:** 87권 전체 edge 생성 + Vault connections + Dispute axis
+**목표:** 12권 전체 within-book edge + cross-domain edge 생성
 
-**의존성:** H.full 완료
+- 신규 8권 within-book edge 생성
+- **cross-domain edge 전략 개선** (기존 파일럿에서 0건 문제 해결)
+- Vault connections 업데이트
 
-### Stage J: Generation 확장 + Hybrid Search ($0) — 3 Tasks
+**의존성:** H.partial 완료
+
+### Stage J: Generation 확장 + Hybrid Search ($0-1) — 3 Tasks
 
 **목표:** 아이디어 생성 파이프라인 + Vector+Graph 복합 검색
 
-**의존성:** I.full 완료
+**의존성:** I.partial 완료
+
+### Stage K: 성능 평가 + 로직 개선 ($1-3) — 4 Tasks
+
+**목표:** 전체 파이프라인 성능 평가, 프로젝트 목표 달성도 측정, 필요 시 로직 개선
+
+**평가 기준 (masterplan §15):**
+| 기준 | 측정 방법 |
+|------|----------|
+| 콘텐츠 생성 품질 | 생성 초안의 50%+ 경미한 편집으로 게시 가능 |
+| 아이디어 유용성 | 실행 가능한 아이디어 산출 여부 |
+| Cross-domain 가치 | 단일 vs cross-domain 검색 비교 |
+| 환각 방지 | 모든 주장이 KU source_spans로 추적 가능 |
+| 파이프라인 안정성 | 새 책 추가 수동 개입 10분 이내 |
+
+**로직 개선 대상 (잠재):**
+- KU 추출 프롬프트 튜닝 (도메인별 최적화)
+- Cross-domain edge 전략 (임베딩 유사도 외 토픽 기반 매칭)
+- Strength 점수 보정 (현재 실질 이진 판단 문제)
+- 생성 프롬프트 템플릿 다양화
+
+**의존성:** J 완료
 
 ---
 
 ## 5. Task Breakdown
 
-### Stage H.infra (인프라 준비) — 6 Tasks
+→ 상세: `tasks.md`
 
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| H.1 | 북 카탈로그 생성 (`build_catalog.py` → `books_catalog.yaml`) | M | - |
-| H.2 | 데이터 마이그레이션 (`migrate_data.py`) | S | H.1 |
-| H.3 | `ku_extractor.py` domain_short 파라미터화 | S | - |
-| H.4 | `renderer.py` 슬래시 도메인 경로 처리 | S | - |
-| H.5 | `config.yaml` + 기존 DB 도메인 통일 | S | H.1 |
-| H.cache | LLM 응답 캐시 레이어 (`llm_cache.py`) | M | - |
-
-### Stage H.pilot (파일럿 인제스트) — 3 Tasks
-
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| H.6p | 배치 처리 스크립트 (파일럿 모드 지원) | L | H.1~H.5, H.cache |
-| H.7p | 파일럿 3권 인제스트 실행 | M | H.6p |
-| H.8p | 파일럿 KU 품질 리포트 생성 | S | H.7p |
-
-### Stage I.pilot (파일럿 그래프) — 5 Tasks
-
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| I.1p | `edge_builder.py` — edge 생성 모듈 | L | H.7p |
-| I.2p | 파일럿 edge 생성 실행 | M | I.1p |
-| I.3p | `traversal.py` — 그래프 탐색 | M | I.2p |
-| I.4p | CLI `ks explore` 추가 | S | I.3p |
-| I.5p | 파일럿 그래프 품질 리포트 | S | I.2p |
-
-### Stage H.full (전체 배치) — 2 Tasks
-
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| H.9 | 나머지 83권 배치 인제스트 | L | Quality Gate |
-| H.10 | 전체 검증 + Vault 재렌더링 | M | H.9 |
-
-### Stage I.full (전체 그래프) — 4 Tasks
-
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| I.6 | 전체 within-book edge 생성 | L | H.10 |
-| I.7 | 전체 cross-domain edge 생성 | L | I.6 |
-| I.8 | Vault connections 업데이트 | M | I.7 |
-| I.9 | Dispute axis 자동 요약 | M | I.7 |
-
-### Stage J (Generation 확장) — 3 Tasks
-
-| ID | Task | Size | 의존성 |
-|----|------|------|--------|
-| J.1 | `hybrid.py` — Vector + Graph 복합 검색 | M | I.8 |
-| J.2 | `idea.py` — 아이디어 생성 파이프라인 | L | J.1 |
-| J.3 | CLI `ks generate idea` + 통합 테스트 | M | J.2 |
-
-**합계:** 23 Tasks (S:6, M:11, L:6)
+| Stage | Tasks | Size 분포 |
+|-------|-------|----------|
+| H.infra | 6 ✅ | S:4, M:2 |
+| H.pilot | 3 ✅ | S:1, M:1, L:1 |
+| I.pilot | 5 ✅ | S:2, M:2, L:1 |
+| H.partial | 2 | M:1, L:1 |
+| I.partial | 4 | S:1, M:2, L:1 |
+| J | 3 | M:2, L:1 |
+| K | 4 | S:1, M:2, L:1 |
+| **합계** | **27** | 완료 14, 잔여 13 |
 
 ---
 
 ## 6. Risks & Mitigation
 
-| 리스크 | 영향 | 확률 | 대응 |
-|--------|------|------|------|
-| 비경제 도메인 KU 품질 저조 | 전체 시스템 품질 하락 | 중 | **파일럿으로 조기 검증**, 도메인별 프롬프트 오버라이드 |
-| KU 추출 비용 초과 | 예산 초과 | 중 | LLM 캐시로 재실행 비용 $0, 파일럿 분리 |
-| 배치 중단 시 데이터 손실 | 재처리 비용 | 중 | **LLM 캐시 + 체크포인트** → 재실행 안전 |
-| Cross-domain edge 환각 | 잘못된 연결 | 중 | 파일럿 수동 검토, threshold 조정 |
-| OpenAI rate limit | 처리 중단 | 높 | delay + 자동 재시도 + 체크포인트 |
-| 75,000+ 파일 Obsidian 성능 | UX 저하 | 중 | 벤치마크 필요, 필요시 도메인별 분리 |
+| 리스크 | 영향 | 대응 |
+|--------|------|------|
+| Cross-domain edge 전략 부족 | 아이디어 생성 품질 저하 | I.partial에서 전용 전략 설계, 토픽 기반 매칭 실험 |
+| 12권으로 성능 평가 한계 | 평가 신뢰도 부족 | 카테고리당 3권으로 최소 다양성 확보, 정성 평가 병행 |
+| 로직 개선 범위 확대 | Phase 3 지연 | 핵심 개선만 Phase 3, 나머지는 Phase 4에서 |
+| 생성 품질 미달 | 프로젝트 목표 재검토 필요 | Stage K에서 조기 발견, 프롬프트/전략 조정 |
 
 ---
 
@@ -218,36 +175,32 @@ PASS → H.full 진행 / FAIL → 프롬프트 튜닝 후 재실행 (캐시 히�
 ### 내부 의존성
 
 ```
-Phase 2 (완료) → H.infra → H.pilot → I.pilot → Quality Gate
-                                                   ├─ PASS → H.full → I.full → J
-                                                   └─ FAIL → 튜닝 → 재실행
+Phase 2 (완료) → H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gate ✅
+                                                           ↓ PASS
+                                              H.partial → I.partial → J → K
+                                                                         ↓
+                                                              로직 개선 완료 → Phase 4
 ```
 
 ### 외부 의존성
 
-| 의존성 | 용도 | 비고 |
+| 의존성 | 용도 | 비용 |
 |--------|------|------|
-| OpenAI API (GPT-4.1-mini) | KU 추출, edge 생성 | 파일럿 ~$3-6, 전체 추가 ~$33-43 |
-| OpenAI API (text-embedding-3-large) | 임베딩 | $2-3 |
-| books-final-processor text.json | 87권 원본 텍스트 | H.2에서 1회 복사 |
-| books-final-processor CSV | 도서 메타데이터 | H.1에서 1회 참조 |
+| OpenAI API (GPT-4.1-mini) | KU 추출, edge 생성 | ~$2.2 (8권) + ~$5-10 (edges) |
+| OpenAI API (text-embedding-3-large) | 임베딩 | < $1 |
+| books-final-processor text.json | 원본 텍스트 | 이미 복사 완료 |
 
 ---
 
 ## 8. 비용 추정
 
-> **실측 기반 (2026-03-01):** econ-thinking 1권 KU 추출 = input $0.09 (220K tokens) + output $0.19 (110K tokens) = **$0.28/권**
-> Edge 생성 비용은 아직 실측 데이터 없음 (추정치 사용)
-
-| 단계 | 항목 | 비용 | 근거 |
+| 단계 | 항목 | 비용 | 상태 |
 |------|------|------|------|
-| Quality Gate 전 | 파일럿 KU 추출 (3권 신규) | ~$1 | 실측 $0.28/권 × 3 |
-| Quality Gate 전 | 파일럿 edge 생성 | 추정 $2-5 | 미검증 |
-| Quality Gate 전 소계 | | **~$3-6** | |
-| Quality Gate 후 | 나머지 83권 KU 추출 | ~$23 | 실측 $0.28/권 × 83 |
-| Quality Gate 후 | 전체 edge 생성 | 추정 $10-20 | 미검증 |
-| Quality Gate 후 소계 | | **~$33-43** | |
-| **Phase 3 합계** | | **~$36-49** | KU 실측 + edge 추정 |
+| H.infra~Quality Gate | 파일럿 KU + edge | ~$4 | ✅ 완료 |
+| H.partial | 추가 8권 KU 추출 | ~$2.2 | 대기 |
+| I.partial | 12권 edge 생성 | ~$5-10 | 대기 |
+| J | 아이디어 생성 테스트 | ~$0-1 | 대기 |
+| K | 성능 평가 (생성 테스트) | ~$1-3 | 대기 |
+| **Phase 3 합계** | | **~$12-20** | |
 
-**vs 기존 추정:** $175-325 → **~$36-49** (KU 추출 비용이 기존 추정의 ~1/60)
-**캐시 효과:** 프롬프트 튜닝 후 재실행 시 변경 안 된 span은 캐시 히트 → 추가 비용 ≈ $0
+**vs 기존 Phase 3 (87권):** ~$36-49 → **~$12-20** (60% 절감)

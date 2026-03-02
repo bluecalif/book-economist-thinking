@@ -27,11 +27,18 @@
 | `src/graph/edge_builder.py` | edge 생성 (쓰레드 안전) |
 | `src/graph/traversal.py` | 그래프 탐색 (BFS + PathScore) |
 
+### Changed Files (I.9)
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `src/graph/dispute.py` | 신규 — contradicts edge 클러스터링 + LLM 논쟁 축 요약 |
+| `src/cli.py` | `ks dispute build/list` 서브커맨드 추가, `✓` 유니코드 → 텍스트 변경 |
+| `reports/dispute_axes.md` | 자동생성 — 80개 논쟁 축 리포트 |
+
 ### 신규 생성 예정
 
 | 파일 | 용도 | Stage |
 |------|------|-------|
-| `src/graph/dispute.py` | Dispute axis 자동 요약 | I.partial |
 | `src/generation/idea.py` | 아이디어 생성 (3모드) | J |
 | `src/search/hybrid.py` | Vector + Graph 복합 검색 | J |
 | `reports/phase3_evaluation.md` | 성능 평가 리포트 | K |
@@ -138,6 +145,7 @@ data/
 - [x] L0 Raw → L1 KU → L2 Graph → L3 Generation 순서 준수
 - [x] CLI 명령어 체계 유지 (ks ingest, search, explore, generate)
 - [x] `ks explore` 명령 추가 완료 (I.4p)
+- [x] `ks dispute build/list` 명령 추가 완료 (I.9)
 - [ ] J에서 `ks generate idea` 명령 추가 예정
 
 ### 지식 구조 (masterplan §5)

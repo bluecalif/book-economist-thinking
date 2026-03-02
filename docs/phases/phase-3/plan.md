@@ -1,6 +1,6 @@
 # Phase 3: Partially-Full (카테고리당 3권) + 성능 평가
 > Last Updated: 2026-03-03
-> Status: In Progress (H.partial ✅ → I.partial 대기)
+> Status: In Progress (I.partial ✅ → J 대기)
 > **전제:** Phase 2 완료 (1권 파이프라인 + 검색 + 생성 + CLI + Vault)
 
 ## 1. Summary (개요)
@@ -37,7 +37,7 @@
 | Knowledge Units | 18,673 |
 | ChromaDB Embeddings | 18,673 |
 | Generations | 2 |
-| Edges | 11,662 (파일럿 4권 within-book only) |
+| Edges | 43,619 (within-book 39,886 + cross-domain 2,996 + cross-book 737) |
 | LLM 캐시 | 구현 완료 |
 
 ### 도메인별 현황
@@ -99,13 +99,9 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 
 8권 추가 인제스트 완료. 12권 전체 검증 통과. (books=12, kus=18,673)
 
-### Stage I.partial: 12권 edge 생성 (~$5-10) — 4 Tasks
+### Stage I.partial: 12권 edge 생성 (~$5-10) — ✅ 완료
 
-**목표:** 12권 전체 within-book edge + cross-domain edge 생성
-
-- 신규 8권 within-book edge 생성
-- **cross-domain edge 전략 개선** (기존 파일럿에서 0건 문제 해결)
-- Vault connections 업데이트
+43,619 edges 생성 + dispute axis 80개 요약 완료.
 
 **의존성:** H.partial 완료
 
@@ -148,10 +144,10 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 | H.pilot | 3 ✅ | S:1, M:1, L:1 |
 | I.pilot | 5 ✅ | S:2, M:2, L:1 |
 | H.partial | 2 ✅ | M:1, L:1 |
-| I.partial | 4 | S:1, M:2, L:1 |
+| I.partial | 4 ✅ | S:1, M:2, L:1 |
 | J | 3 | M:2, L:1 |
 | K | 4 | S:1, M:2, L:1 |
-| **합계** | **27** | 완료 16, 잔여 11 |
+| **합계** | **27** | 완료 20, 잔여 7 |
 
 ---
 
@@ -194,7 +190,7 @@ Phase 2 (완료) → H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gat
 |------|------|------|------|
 | H.infra~Quality Gate | 파일럿 KU + edge | ~$4 | ✅ 완료 |
 | H.partial | 추가 8권 KU 추출 | ~$2.2 | ✅ 완료 |
-| I.partial | 12권 edge 생성 | ~$5-10 | 대기 |
+| I.partial | 12권 edge 생성 + dispute axis | ~$5-10 | ✅ 완료 |
 | J | 아이디어 생성 테스트 | ~$0-1 | 대기 |
 | K | 성능 평가 (생성 테스트) | ~$1-3 | 대기 |
 | **Phase 3 합계** | | **~$12-20** | |

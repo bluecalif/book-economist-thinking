@@ -31,6 +31,8 @@ app = typer.Typer(
 )
 generate_app = typer.Typer(help="콘텐츠 생성 명령어")
 app.add_typer(generate_app, name="generate")
+dispute_app = typer.Typer(help="논쟁 축(Dispute Axis) 분석 명령어")
+app.add_typer(dispute_app, name="dispute")
 
 # --- Config helpers ---
 
@@ -163,7 +165,7 @@ def ingest(
     rendered = render_all_kus(db_path=db_path, output_dir=vault_dir, book_id=bid)
     console.print(f"  렌더링: {rendered}건 → {vault_dir}/domains/")
 
-    console.print("\n[green]✓ Ingest 완료[/green]")
+    console.print("\n[green]Ingest 완료[/green]")
 
 
 # --- search ---
@@ -366,6 +368,144 @@ def stats(
             console.print(f"\n[yellow]ChromaDB 접근 오류: {e}[/yellow]")
 
     conn.close()
+
+
+# --- dispute ---
+
+@dispute_app.command("build")
+def dispute_build(
+    distance_threshold: float = typer.Option(
+        0.5, "--threshold", "-t", help="클러스터링 거리 임계값 (cosine)"
+    ),
+    max_workers: int = typer.Option(5, "--workers", "-w", help="LLM 병렬 호출 수"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="클러스터링만 수행, LLM 호출 없음"),
+    config: Optional[Path] = config_option,
+    verbose: bool = verbose_option,
+) -> None:
+    """contradicts edge 클러스터링 + LLM 요약 → 논쟁 축 리포트 생성."""
+    _setup_logging(verbose)
+    cfg = _load_config(config)
+
+    db_path = PROJECT_ROOT / cfg["paths"]["db"]
+    chroma_dir = PROJECT_ROOT / cfg["paths"]["chroma"]
+    cache_db_path = PROJECT_ROOT / "data" / "llm_cache.db"
+    report_path = PROJECT_ROOT / "reports" / "dispute_axes.md"
+
+    if not db_path.exists():
+        console.print(f"[red]DB 파일 없음: {db_path}[/red]")
+        raise typer.Exit(1)
+
+    from src.db.models import get_connection
+    from src.db.vectors import init_chroma
+    from src.graph.dispute import (
+        prepare_dispute_axes,
+        summarize_clusters,
+        write_report,
+    )
+
+    conn = get_connection(db_path)
+    col = init_chroma(chroma_dir)
+
+    # Step 1: 클러스터링 (LLM 호출 없음)
+    console.print("[bold]Step 1:[/bold] contradicts edge 로드 + 클러스터링...")
+    prep = prepare_dispute_axes(
+        conn, col, distance_threshold=distance_threshold
+    )
+
+    total_contradicts = prep["total_edges"]
+    console.print(f"  contradicts edges: {total_contradicts:,}건")
+
+    if total_contradicts == 0:
+        console.print("[yellow]contradicts edge가 없습니다.[/yellow]")
+        conn.close()
+        return
+
+    main_count = len(prep["main_clusters"])
+    small_count = len(prep["small_clusters"])
+    small_edges = sum(len(c["edges"]) for c in prep["small_clusters"])
+    console.print(f"  클러스터: {main_count}개 (LLM 요약 대상)")
+    console.print(f"  소규모 클러스터: {small_count}개 ({small_edges} edges, 제외)")
+
+    if main_count == 0:
+        console.print("[yellow]유효한 클러스터가 없습니다.[/yellow]")
+        conn.close()
+        return
+
+    if dry_run:
+        console.print(f"\n[yellow]--- DRY RUN ---[/yellow]")
+        console.print(f"LLM 호출 예정: {main_count}건 (gpt-4.1-mini)")
+        console.print(f"예상 비용: ~${main_count * 0.003:.2f}")
+
+        # 클러스터 크기 분포 표시
+        table = Table(title="클러스터 크기 분포")
+        table.add_column("Cluster", justify="right", style="bold")
+        table.add_column("Edges", justify="right", style="cyan")
+        for i, c in enumerate(
+            sorted(prep["main_clusters"], key=lambda x: len(x["edges"]), reverse=True)
+        ):
+            table.add_row(str(i + 1), str(len(c["edges"])))
+        console.print(table)
+        conn.close()
+        return
+
+    # Step 2: LLM 요약
+    console.print(f"[bold]Step 2:[/bold] LLM 요약 ({main_count}건 호출)...")
+    model = cfg["models"].get("generation", "gpt-4.1-mini")
+
+    axes = summarize_clusters(
+        prep["main_clusters"],
+        model=model,
+        cache_db_path=cache_db_path,
+        max_workers=max_workers,
+    )
+
+    if not axes:
+        console.print("[yellow]요약 결과가 없습니다.[/yellow]")
+        conn.close()
+        return
+
+    # 리포트 작성
+    write_report(axes, total_contradicts, len(axes), report_path)
+
+    # 결과 출력
+    table = Table(title="Dispute Axes")
+    table.add_column("#", justify="right", style="bold")
+    table.add_column("Axis Name", style="cyan", max_width=40)
+    table.add_column("Edges", justify="right", style="yellow")
+    table.add_column("Domains", style="magenta")
+
+    for i, axis in enumerate(axes, 1):
+        table.add_row(
+            str(i),
+            axis["axis_name"],
+            str(axis["edge_count"]),
+            ", ".join(axis["domains"]),
+        )
+
+    console.print(table)
+    console.print(f"\n[green]리포트 생성 완료:[/green] {report_path}")
+    conn.close()
+
+
+@dispute_app.command("list")
+def dispute_list(
+    config: Optional[Path] = config_option,
+    verbose: bool = verbose_option,
+) -> None:
+    """기존 논쟁 축 리포트를 표시합니다."""
+    _setup_logging(verbose)
+
+    report_path = PROJECT_ROOT / "reports" / "dispute_axes.md"
+    if not report_path.exists():
+        console.print(
+            "[yellow]리포트가 없습니다. 'ks dispute build'로 먼저 생성하세요.[/yellow]"
+        )
+        raise typer.Exit(1)
+
+    content = report_path.read_text(encoding="utf-8")
+    from rich.markdown import Markdown
+
+    console.print(Markdown(content))
 
 
 # --- Entry point ---

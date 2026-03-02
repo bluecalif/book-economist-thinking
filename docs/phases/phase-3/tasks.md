@@ -1,7 +1,7 @@
 # Phase 3: Partially-Full (카테고리당 3권) — Tasks
 > Last Updated: 2026-03-02
 
-## Progress: 16/27 Tasks (59%)
+## Progress: 20/27 Tasks (74%)
 
 ---
 
@@ -106,19 +106,21 @@
 
 ---
 
-### Stage I.partial: 12권 edge 생성 (~$5-10) — 0/4
+### Stage I.partial: 12권 edge 생성 (~$5-10) — 4/4 ✅
 
-- [ ] I.6 신규 8권 within-book edge 생성
-  - `python scripts/build_edges.py` (파일럿 done 자동 skip)
-- [ ] I.7 cross-domain edge 전략 개선 + 생성
-  - 기존 임베딩 유사도 0.35 threshold 부족 → 전용 전략 설계
-  - 토픽 기반 매칭, 도메인 쌍별 대표 KU 비교 등 실험
+- [x] I.6 신규 8권 within-book edge 생성
+  - `python scripts/build_edges.py` — 39,886 within-book + 737 cross-book same-domain edges
+- [x] I.7 cross-domain edge 전략 개선 + 생성
+  - 2,996 cross-domain edges 생성 완료
   - 4개 도메인 간 교차 edge 생성
-- [ ] I.8 Vault connections 업데이트
+- [x] I.8 Vault connections 업데이트
   - `renderer.py`의 `## Connections` 섹션에 실제 edge 기반 [[wikilink]]
-- [ ] I.9 Dispute axis 자동 요약
-  - `src/graph/dispute.py` 신규 생성
-  - contradicts edge 클러스터 → LLM 논쟁 축 요약
+- [x] I.9 Dispute axis 자동 요약
+  - `src/graph/dispute.py` 신규 생성 — contradicts 3,668건 → 80 클러스터 → LLM 요약
+  - CLI `ks dispute build/list` 추가
+  - `reports/dispute_axes.md` 리포트 생성 (80개 논쟁 축)
+  - AgglomerativeClustering (cosine, threshold=0.5, MIN_CLUSTER_SIZE=10)
+  - dry-run 모드로 비용 사전 확인 가능
 
 ---
 

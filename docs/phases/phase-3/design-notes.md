@@ -53,11 +53,30 @@
 
 ---
 
+## I.9: Dispute Axis 클러스터링 설계
+
+### 설계 대안
+
+| # | 대안 | 장점 | 단점 | 결정 |
+|---|------|------|------|------|
+| 1 | MIN_CLUSTER_SIZE=3 (원래 계획) | 더 많은 축 포착 | 395개 클러스터 → LLM 호출 과다, 개요 불가 | 기각 |
+| 2 | **MIN_CLUSTER_SIZE=10** | 80개 축, 적정 비용 ~$0.24 | 소규모 논쟁 누락 (2,066 edges) | **채택** |
+| 3 | distance_threshold=0.7 | 클러스터 자체를 크게 | 재클러스터링 필요, 결과 예측 어려움 | 기각 |
+
+### 주요 수치
+
+- 3,668 contradicts edges → 800 클러스터 (threshold=0.5) → 80개 주요 축 (edges >= 10)
+- LLM 80회 호출 중 46건 캐시 히트 (이전 실행 캐시), 34건 API 호출
+- `prepare_dispute_axes()` + `summarize_clusters()` 2단계 분리 → dry-run 지원
+- Windows cp949 인코딩 이슈로 CLI `✓` 문자 제거
+
+---
+
 ## 열린 질문 (Open Questions)
 
 - [x] 파일럿 도서 구체적 선정 — 카탈로그 status=pilot 기반
-- [ ] ChromaDB 18,000+ embedding 성능 — Phase 3 규모에서 확인
-- [ ] Cross-domain edge 전략 — 임베딩 유사도 0.35로는 부족, 전용 전략 설계 필요 (I.partial)
+- [x] ChromaDB 18,000+ embedding 성능 — 정상 (클러스터링 ~30초)
+- [x] Cross-domain edge 전략 — cross-book centroid 패스로 2,996건 성공 (I.7)
 - [ ] 성능 평가 기준 구체화 — Stage K에서 정량/정성 평가 방법 확정
 
 ---
@@ -73,6 +92,8 @@
 - **87권 전체 투자 전에 성능 평가가 필수** — 12권으로 E2E 검증 후 확장
 - **8권 배치 인제스트 안정성 확인** — workers=5, 전량 성공, parse rate 98.6~100%
 - **KU 분포 균형** — 4개 도메인 간 KU 수 편차 작음 (4,327~5,349)
+- **Dispute axis dry-run 필수** — 클러스터 수 예측 불가 (30~800), LLM 호출 전 확인
+- **Windows cp949 인코딩** — Rich 콘솔에서 유니코드 특수문자 사용 금지
 
 ---
 
@@ -97,8 +118,11 @@
 ├── src/graph/edge_builder.py     — edge 생성 (쓰레드 안전) ✅
 └── src/graph/traversal.py        — 그래프 탐색 ✅
 
+신규 (완료):
+├── src/graph/dispute.py          — Dispute axis 클러스터링 + LLM 요약 ✅
+├── reports/dispute_axes.md       — 80개 논쟁 축 리포트 ✅
+
 신규 (예정):
-├── src/graph/dispute.py          — Dispute axis 요약 (I.partial)
 ├── src/generation/idea.py        — 아이디어 생성 (J)
 ├── src/search/hybrid.py          — 복합 검색 (J)
 └── reports/phase3_evaluation.md  — 성능 평가 리포트 (K)

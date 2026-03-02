@@ -1,83 +1,64 @@
 # Session Compact
 
-> Generated: 2026-03-02 (Session 27)
-> Source: Phase 3 I.pilot — edge_builder, traversal, CLI explore 구현
+> Generated: 2026-03-02 (Session 28)
+> Source: Phase 3 I.pilot 완료 — edge 생성 실행 + 품질 리포트 + Quality Gate PASS
 
 ## Goal
-Phase 3 Stage I.pilot 구현 — KU 간 edge 생성 파이프라인 + 그래프 탐색.
+Phase 3 Stage I.pilot 완료 — edge 생성 파이프라인 실행 및 품질 검증.
 
 ## Completed
 - [x] **H.infra 6/6** (Session 22-23): 87권 카탈로그, 데이터 경로, batch_ingest.py
 - [x] **병렬 LLM 호출 구현** (Session 24): ThreadPoolExecutor, WAL 모드, --workers 옵션
 - [x] **H.7p 파일럿 3권 인제스트 실행** (Session 25): 1,383 spans → 4,875 KUs
 - [x] **H.8p 파일럿 KU 품질 리포트** (Session 26): Quality Gate PASS
-- [x] **I.1p edge CRUD + edge_builder** (Session 27)
-  - `src/db/models.py`: insert_edge, list_edges_by_ku, count_edges 추가
-  - `src/graph/__init__.py`: 패키지 생성
-  - `src/graph/edge_builder.py`: 2-Tier 후보 선정 + LLM 판정 + 병렬 build_edges
-- [x] **I.2p build_edges.py** (Session 27)
-  - `scripts/build_edges.py`: --mode within|cross-chapter|cross-domain|all, --dry-run
-  - dry-run 검증: within 13,490 + cross-ch 118 + cross-domain 35 = 13,643 후보 쌍
-- [x] **I.3p traversal.py** (Session 27)
-  - `src/graph/traversal.py`: BFS + PathScore (HarmonicMean × Mean confidence)
-- [x] **I.4p CLI explore** (Session 27)
-  - `src/cli.py`: `ks explore <ku-id> --depth 2` 명령어 추가
+- [x] **I.1p~I.4p edge 코드** (Session 27): edge_builder, traversal, CLI explore
+- [x] **I.2p edge 생성 실행** (Session 28)
+  - SQLite 멀티쓰레드 버그 수정 (KU 데이터 pre-load 패턴)
+  - 13,643 후보 → 11,662 edges 생성 (85.5% 성공률)
+  - 소요 60분, gpt-4.1-mini, workers=5
+- [x] **I.3p~I.4p 탐색 검증** (Session 28): explore 명령어 정상 동작 확인
+- [x] **I.5p 그래프 품질 리포트** (Session 28): Quality Gate PASS
+  - `reports/pilot_graph.md` 작성 완료
 
 ## Current State
-**Phase 3 Stage I.1p~I.4p 완료 → I.2p 실행(edge 실제 생성) + I.5p(품질 리포트) 대기.**
+**Phase 3 Stage I.pilot 완료 → H.full (87권 확장) 진행 가능.**
 
 ### 커밋 히스토리
 ```
+<TBD>  phase-3 I.pilot: edge 생성 실행 + 쓰레드 안전성 수정 + 품질 리포트
+78d75b8 phase-3 I.pilot: edge 생성 파이프라인 + 그래프 탐색 구현
 3898df8 phase-3 H.8p: 파일럿 품질 리포트 + 인제스트 결과물
 ab78087 phase-3 H.pilot: 병렬 LLM 호출 구현 + 배치 인제스트 스크립트
-b836f7f phase-3 Stage H.infra: 87권 확장 인프라 준비
 ```
 
 ### DB 현황
-- books=4, spans=1,724, kus=5,872, chroma=5,872, gens=2, edges=0
+- books=4, spans=1,724, kus=5,872, chroma=5,872, gens=2, **edges=11,662**
 - 도메인: `경제/경영`(1권), `인문/자기계발`(1권), `역사/사회`(1권), `과학/기술`(1권)
 
-### Edge 후보 실측 (dry-run)
-| 전략 | 후보 쌍 |
-|------|---------|
-| Within-chapter | 13,490 |
-| Cross-chapter (centroid) | 118 |
-| Cross-domain | 35 |
-| **합계 (중복제거)** | **13,643** |
-
-유사도 범위: 0.350~0.999, 평균 0.532
+### Edge 실적
+| 항목 | 값 |
+|------|-----|
+| 후보 쌍 | 13,643 |
+| 생성된 edges | 11,662 (85.5%) |
+| Relation type | extends 42.7%, supports 34.7%, contradicts 10.3%, explains 9.5%, analogous_to 2.3%, example_of 0.6% |
+| Strength | 평균 0.779, 99.1%가 0.7 이상 |
+| 샘플 적합도 | 6/6 (100%) |
 
 ### 디렉터리 구조 (변경분)
 ```
-src/
-├── graph/                 # 신규 패키지
-│   ├── __init__.py
-│   ├── edge_builder.py    # 후보 선정 + LLM 판정 + build_edges
-│   └── traversal.py       # BFS + PathScore
-├── db/
-│   └── models.py          # edge CRUD 3함수 추가
-└── cli.py                 # explore 명령어 추가
-
-scripts/
-└── build_edges.py         # 배치 edge 생성
+src/graph/edge_builder.py  # KU pre-load 패턴으로 쓰레드 안전성 수정
+reports/pilot_graph.md     # 신규 — 그래프 품질 리포트
 ```
 
 ## Remaining / TODO
-- [ ] **I.2p 실행**: `python scripts/build_edges.py --mode all --workers 5` (추정 ~$3)
-- [ ] **I.5p 그래프 품질 리포트**: `reports/pilot_graph.md`
-- [ ] **Git 커밋**: I.pilot 코드
-- [ ] **Quality Gate**: edge 적합도 ≥60-70%
-- [ ] **Stage H.full** (~$23) — 나머지 83권
+- [ ] **Stage H.full** (~$23) — 나머지 83권 인제스트
 - [ ] **Stage I.full** (추정 $10-20) — 전체 그래프 + Dispute
 - [ ] **Stage J** ($0) — Hybrid Search + Idea Generation
 
 ## Key Decisions
-- **2-Tier 접근**: within-chapter 전수 + cross-chapter centroid 샘플링 (비용 37% 절감)
-- **threshold 0.35**: ChromaDB 유사도 실측 기반 (top-10 기준 0.40~0.53)
-- **Centroid 선정**: 챕터 평균 벡터와 가장 가까운 KU 5개
-- **Edge 6타입**: supports, contradicts, extends, explains, example_of, analogous_to
-- **LLM 판정**: none 또는 strength < 0.3 → edge 미생성
-- **Edge ID 규칙**: `edge-{from_ku_short}-{to_ku_short}`
+- **SQLite 멀티쓰레드**: conn 객체를 쓰레드 간 공유하면 안 됨 → KU 데이터를 메인 쓰레드에서 pre-load 후 dict로 전달
+- **Cross-domain edge 부족**: threshold=0.35에서 35건 후보만 → 향후 전용 전략 필요
+- **Strength 편향**: LLM이 관계를 인정하면 대부분 0.7+ → 실질적 이진 판단
 
 ## Context
 다음 세션에서는 답변에 한국어를 사용하세요.
@@ -90,14 +71,11 @@ scripts/
 ### Phase 3 전체 흐름
 ```
 H.infra ($0) ✅ → H.pilot (~$1) ✅ → H.8p (품질 리포트) ✅
-                                        → I.pilot (코드) ✅ → I.2p 실행 + I.5p 리포트 ← 현재 위치
-                                          ├─ PASS → H.full (~$23) → I.full ($10-20) → J ($0)
-                                          └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 $0)
+                                       → I.pilot (코드+실행+리포트) ✅ ← 완료
+                                         ├─ PASS ✅ → H.full (~$23) → I.full ($10-20) → J ($0)
+                                         └─ FAIL → 프롬프트 튜닝 → 재실행 (캐시 $0)
 ```
 
 ## Next Action
-1. `python scripts/build_edges.py --mode all --workers 5` 실행 → edge 생성
-2. `python -m src.cli explore ku-econ-001-0001 --depth 2` → 그래프 탐색 확인
-3. `reports/pilot_graph.md` 품질 리포트 작성
-4. Quality Gate 판정
-5. Git 커밋
+1. Stage H.full 계획 수립 (83권 인제스트 전략)
+2. 또는 Stage I.full 직접 진행 (현재 4권의 edge 데이터로)

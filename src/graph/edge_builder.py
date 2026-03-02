@@ -459,6 +459,7 @@ def build_edges(
     """후보 쌍에 대해 LLM 판정 → edge 생성.
 
     ThreadPoolExecutor 패턴 (ku_extractor.py와 동일).
+    KU 데이터를 미리 로드하여 쓰레드에서 SQLite 접근 방지.
     Returns: {"total_candidates", "edges_created", "edges_rejected"}
     """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -466,9 +467,19 @@ def build_edges(
     total = len(candidates)
     logger.info("Building edges: %d candidates, workers=%d", total, max_workers)
 
+    # KU 데이터 미리 로드 (메인 쓰레드에서 SQLite 접근)
+    needed_ids = set()
+    for a, b, _ in candidates:
+        needed_ids.add(a)
+        needed_ids.add(b)
+    ku_cache: dict[str, dict | None] = {}
+    for kid in needed_ids:
+        ku_cache[kid] = get_ku(conn, kid)
+    logger.info("Pre-loaded %d KU records for edge judging", len(ku_cache))
+
     def _judge_one(idx: int, ku_a_id: str, ku_b_id: str, sim: float):
-        ku_a = get_ku(conn, ku_a_id)
-        ku_b = get_ku(conn, ku_b_id)
+        ku_a = ku_cache.get(ku_a_id)
+        ku_b = ku_cache.get(ku_b_id)
         if not ku_a or not ku_b:
             return idx, None
         result = judge_edge(client, ku_a, ku_b, model, cache_db_path)

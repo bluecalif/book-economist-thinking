@@ -122,9 +122,14 @@
 ├── src/graph/dispute.py          — Dispute axis 클러스터링 + LLM 요약 ✅
 ├── reports/dispute_axes.md       — 80개 논쟁 축 리포트 ✅
 
+신규 (완료):
+├── src/search/hybrid.py          — Vector + Graph 복합 검색 ✅
+├── src/generation/idea.py        — 아이디어 생성 (3모드) ✅
+├── src/generation/templates/idea_business.txt     ✅
+├── src/generation/templates/idea_content.txt      ✅
+└── src/generation/templates/idea_serendipity.txt  ✅
+
 신규 (예정):
-├── src/generation/idea.py        — 아이디어 생성 (J)
-├── src/search/hybrid.py          — 복합 검색 (J)
 └── reports/phase3_evaluation.md  — 성능 평가 리포트 (K)
 
 리포트:

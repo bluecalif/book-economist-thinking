@@ -508,6 +508,75 @@ def dispute_list(
     console.print(Markdown(content))
 
 
+# --- hsearch (hybrid search) ---
+
+@app.command()
+def hsearch(
+    query: str = typer.Argument(..., help="검색 쿼리 (자연어)"),
+    top_k: int = typer.Option(10, "--top-k", "-k", help="최종 결과 수"),
+    vector_top_k: int = typer.Option(20, "--vector-top-k", help="벡터 검색 후보 수"),
+    graph_depth: int = typer.Option(2, "--depth", "-d", help="BFS 깊이"),
+    graph_seeds: int = typer.Option(5, "--seeds", "-s", help="그래프 확장할 시드 KU 수"),
+    alpha: float = typer.Option(0.6, "--alpha", "-a", help="벡터/그래프 가중치 (0~1)"),
+    domain: Optional[str] = typer.Option(None, "--domain", help="도메인 필터"),
+    config: Optional[Path] = config_option,
+    verbose: bool = verbose_option,
+) -> None:
+    """Vector + Graph 복합 검색."""
+    _setup_logging(verbose)
+
+    from src.search.hybrid import format_hybrid_results_rich, hybrid_search
+
+    results = hybrid_search(
+        query,
+        top_k=top_k,
+        vector_top_k=vector_top_k,
+        graph_depth=graph_depth,
+        graph_seeds=graph_seeds,
+        alpha=alpha,
+        domain=domain,
+    )
+    format_hybrid_results_rich(results)
+
+
+# --- generate idea ---
+
+@generate_app.command("idea")
+def generate_idea_cmd(
+    topic: Optional[str] = typer.Option(None, "--topic", help="아이디어 주제 (serendipity 모드에서는 불필요)"),
+    mode: str = typer.Option("business", "--mode", "-m", help="모드: business, content, serendipity"),
+    top_k: int = typer.Option(8, "--top-k", "-k", help="참조할 KU 수"),
+    no_save: bool = typer.Option(False, "--no-save", help="DB에 저장하지 않음"),
+    config: Optional[Path] = config_option,
+    verbose: bool = verbose_option,
+) -> None:
+    """아이디어 생성 (business, content, serendipity)."""
+    _setup_logging(verbose)
+
+    from src.generation.idea import generate_idea
+
+    try:
+        result = generate_idea(
+            topic=topic,
+            mode=mode,
+            top_k=top_k,
+            save=not no_save,
+        )
+    except ValueError as e:
+        console.print(f"[red]오류: {e}[/red]")
+        raise typer.Exit(1)
+
+    mode_label = {"business": "비즈니스", "content": "콘텐츠", "serendipity": "세렌디피티"}
+    label = mode_label.get(mode, mode)
+    title = f"{label} 아이디어"
+    if topic:
+        title += f": {topic}"
+
+    console.print(f"\n[bold cyan]── {title} ──[/bold cyan]\n")
+    console.print(result.content)
+    console.print(f"\n[dim]생성 ID: {result.generation_id} | KU {len(result.ku_ids)}건 참조[/dim]")
+
+
 # --- Entry point ---
 
 if __name__ == "__main__":

@@ -35,12 +35,21 @@
 | `src/cli.py` | `ks dispute build/list` 서브커맨드 추가, `✓` 유니코드 → 텍스트 변경 |
 | `reports/dispute_axes.md` | 자동생성 — 80개 논쟁 축 리포트 |
 
+### Changed Files (J.1~J.3)
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `src/search/hybrid.py` | 신규 — Vector + Graph 복합 검색 (HybridResult, hybrid_search, format_hybrid_results_rich) |
+| `src/generation/idea.py` | 신규 — 아이디어 생성 파이프라인 (IdeaResult, generate_idea, 3모드) |
+| `src/generation/templates/idea_business.txt` | 신규 — 비즈니스 아이디어 프롬프트 |
+| `src/generation/templates/idea_content.txt` | 신규 — 콘텐츠 시리즈 기획 프롬프트 |
+| `src/generation/templates/idea_serendipity.txt` | 신규 — 세렌디피티 아이디어 프롬프트 |
+| `src/cli.py` | `hsearch` + `generate idea` 명령 추가 |
+
 ### 신규 생성 예정
 
 | 파일 | 용도 | Stage |
 |------|------|-------|
-| `src/generation/idea.py` | 아이디어 생성 (3모드) | J |
-| `src/search/hybrid.py` | Vector + Graph 복합 검색 | J |
 | `reports/phase3_evaluation.md` | 성능 평가 리포트 | K |
 
 ### 참조 (읽기 전용)
@@ -136,6 +145,9 @@ data/
 | 12 | Strength 실질 이진 판단 | LLM이 관계 인정 시 99.1%가 0.7+ |
 | **13** | **Phase 3 범위를 카테고리당 3권(12권)으로 축소** | **전체 파이프라인 완성 + 성능 평가 우선, 전체 확장은 Phase 4로** |
 | **14** | **Stage K 성능 평가 추가** | **로직 개선 기회를 Phase 4 전에 확보** |
+| **15** | **hybrid_score = alpha(0.6)*similarity + (1-alpha)*path_score** | **벡터 우세 가중, path_score max 정규화** |
+| **16** | **serendipity 모드: DB에서 cross-domain edge 랜덤 3쌍 샘플링** | **별도 검색 없이 기존 edge 활용** |
+| **17** | **기존 코드 재사용 (content.py → idea.py)** | **_build_ku_context, _append_sources, insert_generation 임포트** |
 
 ---
 
@@ -146,7 +158,7 @@ data/
 - [x] CLI 명령어 체계 유지 (ks ingest, search, explore, generate)
 - [x] `ks explore` 명령 추가 완료 (I.4p)
 - [x] `ks dispute build/list` 명령 추가 완료 (I.9)
-- [ ] J에서 `ks generate idea` 명령 추가 예정
+- [x] J에서 `ks hsearch`, `ks generate idea` 명령 추가 완료 (J.3)
 
 ### 지식 구조 (masterplan §5)
 - [x] KU 포맷: claim + evidence_summary + counter_summary

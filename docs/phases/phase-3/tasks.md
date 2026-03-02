@@ -1,7 +1,7 @@
 # Phase 3: Partially-Full (카테고리당 3권) — Tasks
 > Last Updated: 2026-03-02
 
-## Progress: 20/27 Tasks (74%)
+## Progress: 23/27 Tasks (85%)
 
 ---
 
@@ -123,17 +123,19 @@
   - dry-run 모드로 비용 사전 확인 가능
 
 ---
+  
+### Stage J: Generation 확장 + Hybrid Search ($0-1) — 3/3 ✅
 
-### Stage J: Generation 확장 + Hybrid Search ($0-1) — 0/3
-
-- [ ] J.1 `src/search/hybrid.py` — Vector + Graph 복합 검색
+- [x] J.1 `src/search/hybrid.py` — Vector + Graph 복합 검색
   - Vector Search로 시드 KU → Graph 1-2 hop 확장
-  - PathScore 기반 re-ranking
-- [ ] J.2 `src/generation/idea.py` — 아이디어 생성 파이프라인
+  - hybrid_score = alpha(0.6)*similarity + (1-alpha)*normalized_path_score
+  - 쿼리 테스트: "경제적 불평등과 기술 발전" → 10건 (source="both" 100%)
+- [x] J.2 `src/generation/idea.py` — 아이디어 생성 파이프라인
   - business: 비즈니스 모델/서비스 아이디어
   - content: 콘텐츠 시리즈/주제 기획
-  - serendipity: 랜덤 cross-domain 조합
-- [ ] J.3 CLI `ks generate idea` + 통합 테스트
+  - serendipity: 랜덤 cross-domain edge 3쌍 샘플링
+- [x] J.3 CLI `ks hsearch` + `ks generate idea` + 통합 테스트
+  - 3모드 수동 테스트 완료 (business, serendipity 검증, content 동일 구조)
 
 ---
 

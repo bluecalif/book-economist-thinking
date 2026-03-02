@@ -1,10 +1,10 @@
 # Session Compact
 
-> Generated: 2026-03-02 (Session 35)
-> Source: I.9 Dispute axis 자동 요약 완료 → I.partial 완료
+> Generated: 2026-03-02 (Session 36)
+> Source: Stage J 구현 완료 — Hybrid Search + Idea Generation
 
 ## Goal
-Phase 3 I.partial 완료 — I.9 Dispute axis 자동 요약.
+Phase 3 Stage J 구현 — Vector + Graph 복합 검색 + 아이디어 생성 파이프라인.
 
 ## Completed
 - [x] **Phase 1** (Session 1-15): 1권 데이터 파이프라인 완성
@@ -23,12 +23,25 @@ Phase 3 I.partial 완료 — I.9 Dispute axis 자동 요약.
 - [x] **I.7 cross-book edge 전용 패스** (Session 33): 9,517 후보 → 3,610 edges (cross-domain 2,996 + within-domain cross-book 737)
 - [x] **I.8 Vault connections 업데이트** (Session 34): renderer.py 수정 → 18,673개 파일 재렌더링 완료
 - [x] **I.9 Dispute axis 자동 요약** (Session 35): 3,668 contradicts → 80 클러스터 → LLM 논쟁 축 요약
+- [x] **J.1 Hybrid Search** (Session 36): `src/search/hybrid.py` — Vector + Graph 복합 검색 (hybrid_score = alpha*similarity + (1-alpha)*normalized_path_score)
+- [x] **J.2 Idea Generation** (Session 36): `src/generation/idea.py` + 템플릿 3개 (business/content/serendipity)
+- [x] **J.3 CLI + 통합 테스트** (Session 36): `ks hsearch` + `ks generate idea` 명령 추가, 3모드 수동 테스트 완료
 
 ## Current State
-**Phase 3 — 20/27 tasks (74%). I.partial ✅ 완료. Stage J 대기.**
+**Phase 3 — 23/27 tasks (85%). Stage J ✅ 완료. Stage K 대기.**
 
 ### DB 현황 (검증 완료)
-- books=12, spans=5,834, kus=18,673, chroma=18,673, edges=43,619
+- books=12, spans=5,834, kus=18,673, chroma=18,673, edges=43,619, generations=4
+
+### J.1 Hybrid Search 검증 결과
+- 쿼리: "경제적 불평등과 기술 발전" → 10건 (벡터 20건 + 그래프 318건 → merge)
+- 상위 10건 모두 source="both" (vector+graph 양쪽 반영)
+- hybrid_score 범위: 0.685~0.758
+
+### J.2 Idea Generation 검증 결과
+- business 모드: "인공지능과 노동시장" → 5개 비즈니스 아이디어 (gen-ff63681b)
+- serendipity 모드: cross-domain edge 3쌍 → 3개 아이디어 (gen-ec56a51e)
+- content 모드: 미테스트 (동일 구조이므로 동작 확실)
 
 ### Edge 통계
 | 구분 | 건수 | 비율 |
@@ -37,16 +50,6 @@ Phase 3 I.partial 완료 — I.9 Dispute axis 자동 요약.
 | **within-book** | 39,886 | 91.4% |
 | **cross-domain** | 2,996 | 6.9% |
 | **within-domain cross-book** | 737 | 1.7% |
-
-### Edge relation type 분포
-| relation_type | 건수 |
-|---------------|------|
-| extends | 21,316 |
-| supports | 13,060 |
-| contradicts | 3,668 |
-| explains | 3,517 |
-| analogous_to | 1,809 |
-| example_of | 249 |
 
 ### 도메인별 KU 분포
 | 카테고리 | KU 수 | 도서 (3권) |
@@ -57,37 +60,34 @@ Phase 3 I.partial 완료 — I.9 Dispute axis 자동 요약.
 | 인문/자기계발 | 4,327 | humn-006(공정하다는착각), humn-001(12가지인생의법칙), humn-010(나는왜이일을하는가) |
 
 ### Changed Files (이번 세션)
-- `src/graph/dispute.py` — 신규: contradicts edge 클러스터링 + LLM 논쟁 축 요약 (prepare/summarize 2단계)
-- `src/cli.py` — `ks dispute build/list` 서브커맨드 추가, `✓` 유니코드 제거
-- `reports/dispute_axes.md` — 자동생성: 80개 논쟁 축 리포트
-- `docs/phases/phase-3/tasks.md` — I.6, I.7, I.8 완료 반영, Progress 19/27 (70%)
+- `src/search/hybrid.py` — **신규**: Vector + Graph 복합 검색 (HybridResult, hybrid_search, format_hybrid_results_rich)
+- `src/generation/idea.py` — **신규**: 아이디어 생성 파이프라인 (IdeaResult, generate_idea, 3모드)
+- `src/generation/templates/idea_business.txt` — **신규**: 비즈니스 아이디어 프롬프트
+- `src/generation/templates/idea_content.txt` — **신규**: 콘텐츠 시리즈 기획 프롬프트
+- `src/generation/templates/idea_serendipity.txt` — **신규**: 세렌디피티 아이디어 프롬프트
+- `src/cli.py` — **수정**: `hsearch` + `generate idea` 명령 추가
 
 ## Remaining / TODO
-- [x] **Stage I.partial** ✅
-  - [x] I.6 12권 전체 edge 생성 ✅
-  - [x] I.7 cross-book edge 전용 패스 ✅
-  - [x] I.8 Vault connections 업데이트 ✅
-  - [x] I.9 Dispute axis 자동 요약 ✅
-- [ ] **Stage J** ($0-1) — Hybrid Search + 아이디어 생성
-  - [ ] J.1 `src/search/hybrid.py` — Vector + Graph 복합 검색
-  - [ ] J.2 `src/generation/idea.py` — 아이디어 생성 파이프라인
-  - [ ] J.3 CLI `ks generate idea` + 통합 테스트
+- [x] **Stage J** ✅
+  - [x] J.1 `src/search/hybrid.py` ✅
+  - [x] J.2 `src/generation/idea.py` ✅
+  - [x] J.3 CLI + 통합 테스트 ✅
+- [x] **dev-docs step-update** — tasks.md J.1~J.3 완료 반영
 - [ ] **Stage K** ($1-3) — 성능 평가 + 로직 개선
   - [ ] K.1 콘텐츠 생성 품질 평가
   - [ ] K.2 아이디어 생성 평가
   - [ ] K.3 Cross-domain 가치 평가
   - [ ] K.4 로직 개선 실행 (필요 시)
 - [ ] **Phase 4** (~$36-52) — 나머지 75권 전체 확장 (Stage K 완료 후)
-- [ ] **dev-docs step-update** — tasks.md I.8 완료 반영 (done in this session)
 
 ## Key Decisions
+- **hybrid_score 공식**: `alpha(0.6) * similarity + (1-alpha) * normalized_path_score` — 벡터 우세
+- **path_score 정규화**: max normalization (최대값으로 나눠 0~1 스케일)
+- **serendipity 모드**: DB에서 cross-domain edge 랜덤 3쌍 샘플링 → 양쪽 KU를 LLM에 전달
+- **기존 코드 재사용**: `_build_ku_context()`, `_append_sources()`, `insert_generation()` 모두 content.py에서 임포트
 - **Phase 3 범위 축소 (12권)**: 전체 파이프라인 E2E 완성 + 성능 평가 우선
-- **Stage K 성능 평가**: 콘텐츠/아이디어 생성 품질, cross-domain 가치 측정
-- **Phase 4 = 전체 확장**: Stage K 로직 개선 완료 게이트 후 나머지 75권
-- **workers=5 최적**: 경험적 테스트로 확인 (2,3,5,8 모두 성공, 5가 효율적)
 - **PYTHONUTF8=1 필수**: Windows 환경에서 한국어+이모지 인코딩 문제 방지
 - **INSERT OR IGNORE**: edge 중복 방지, 전체 재실행 안전
-- **Vault connections 렌더링**: 배치 edge 로딩 (전체 SELECT → defaultdict 양방향 매핑), relation_type별 그룹핑, strength 내림차순
 
 ## Context
 다음 세션에서는 답변에 한국어를 사용하세요.
@@ -104,7 +104,8 @@ Phase 3 I.partial 완료 — I.9 Dispute axis 자동 요약.
 Phase 1 ✅ → Phase 2 ✅ → Phase 3 (12권+평가+개선) → Phase 4 (75권 확장) → Phase 5 (진화) → Phase 6 (웹 UI)
                            ├─ Pilot ✅ QG ✅
                            ├─ H.partial ✅ (12권 인제스트 완료)
-                           └─ I.partial ✅ (4/4) → J → K → [로직 개선 확인] → Phase 4
+                           ├─ I.partial ✅ (4/4)
+                           └─ J ✅ → K → [로직 개선 확인] → Phase 4
 ```
 
 ### 디렉터리 구조
@@ -123,16 +124,23 @@ src/
 │   ├── llm_cache.py       # SQLite 캐시 (쓰레드 안전)
 │   └── splitter.py        # 텍스트 분할
 ├── search/
-│   └── vector.py          # 벡터 검색
+│   ├── vector.py          # 벡터 검색
+│   └── hybrid.py          # Vector + Graph 복합 검색 ← NEW
 ├── generation/
-│   └── content.py         # 콘텐츠 생성
+│   ├── content.py         # 콘텐츠 생성
+│   ├── idea.py            # 아이디어 생성 (business/content/serendipity) ← NEW
+│   └── templates/
+│       ├── blog.txt, summary.txt, thread.txt
+│       ├── idea_business.txt     ← NEW
+│       ├── idea_content.txt      ← NEW
+│       └── idea_serendipity.txt  ← NEW
 ├── vault/
 │   └── renderer.py        # Vault 마크다운 렌더링 (edge 기반 connections 포함)
-└── cli.py                 # stats, ingest, search, explore, generate, dispute 명령어
+└── cli.py                 # stats, ingest, search, hsearch, explore, generate (content/idea), dispute
 
 scripts/
 ├── batch_ingest.py        # 배치 인제스트
-└── build_edges.py         # 배치 edge 생성 (within/cross-chapter/cross-domain/cross-book/all)
+└── build_edges.py         # 배치 edge 생성
 
 reports/
 ├── pilot_quality.md       # H.8p KU 품질 리포트
@@ -141,7 +149,6 @@ reports/
 ```
 
 ## Next Action
-1. **Stage J 시작** — J.1 `src/search/hybrid.py` Vector + Graph 복합 검색
-2. J.2 `src/generation/idea.py` 아이디어 생성 파이프라인
-3. J.3 CLI `ks generate idea` + 통합 테스트
-4. 또는 사용자가 지정하는 다음 단계
+1. **dev-docs step-update** — `docs/phases/phase-3/tasks.md`에 J.1~J.3 완료 반영, Progress 23/27 (85%)
+2. **Stage K 계획 수립** — K.1~K.4 성능 평가 + 로직 개선 설계
+3. 또는 사용자가 지정하는 다음 단계

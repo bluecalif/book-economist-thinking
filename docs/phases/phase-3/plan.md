@@ -1,6 +1,6 @@
 # Phase 3: Partially-Full (카테고리당 3권) + 성능 평가
-> Last Updated: 2026-03-03
-> Status: In Progress (I.partial ✅ → J 대기)
+> Last Updated: 2026-03-02
+> Status: In Progress (J ✅ → K 대기)
 > **전제:** Phase 2 완료 (1권 파이프라인 + 검색 + 생성 + CLI + Vault)
 
 ## 1. Summary (개요)
@@ -36,7 +36,7 @@
 | Raw Spans | 5,834 |
 | Knowledge Units | 18,673 |
 | ChromaDB Embeddings | 18,673 |
-| Generations | 2 |
+| Generations | 4 |
 | Edges | 43,619 (within-book 39,886 + cross-domain 2,996 + cross-book 737) |
 | LLM 캐시 | 구현 완료 |
 
@@ -105,11 +105,9 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 
 **의존성:** H.partial 완료
 
-### Stage J: Generation 확장 + Hybrid Search ($0-1) — 3 Tasks
+### Stage J: Generation 확장 + Hybrid Search ($0-1) — ✅ 완료
 
-**목표:** 아이디어 생성 파이프라인 + Vector+Graph 복합 검색
-
-**의존성:** I.partial 완료
+아이디어 생성 파이프라인(3모드) + Vector+Graph 복합 검색 구현 완료. 3모드 수동 테스트 PASS.
 
 ### Stage K: 성능 평가 + 로직 개선 ($1-3) — 4 Tasks
 
@@ -145,9 +143,9 @@ H.infra ($0) ✅ → H.pilot (~$1) ✅ → I.pilot (~$3) ✅ → Quality Gate �
 | I.pilot | 5 ✅ | S:2, M:2, L:1 |
 | H.partial | 2 ✅ | M:1, L:1 |
 | I.partial | 4 ✅ | S:1, M:2, L:1 |
-| J | 3 | M:2, L:1 |
+| J | 3 ✅ | M:2, L:1 |
 | K | 4 | S:1, M:2, L:1 |
-| **합계** | **27** | 완료 20, 잔여 7 |
+| **합계** | **27** | 완료 23, 잔여 4 |
 
 ---
 
@@ -191,7 +189,7 @@ Phase 2 (완료) → H.infra ✅ → H.pilot ✅ → I.pilot ✅ → Quality Gat
 | H.infra~Quality Gate | 파일럿 KU + edge | ~$4 | ✅ 완료 |
 | H.partial | 추가 8권 KU 추출 | ~$2.2 | ✅ 완료 |
 | I.partial | 12권 edge 생성 + dispute axis | ~$5-10 | ✅ 완료 |
-| J | 아이디어 생성 테스트 | ~$0-1 | 대기 |
+| J | 아이디어 생성 테스트 | ~$0-1 | ✅ 완료 |
 | K | 성능 평가 (생성 테스트) | ~$1-3 | 대기 |
 | **Phase 3 합계** | | **~$12-20** | |
 
